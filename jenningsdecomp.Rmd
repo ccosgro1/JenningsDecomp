@@ -1,0 +1,26 @@
+---
+title: "JenningsDecomp"
+author: "Colleen Cosgrove"
+date: "February 20, 2019"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, AFDM Plotting}
+#Load Data
+decomp=read.csv("C:/Users/Colleen/OneDrive/Documents/School/Research/Data/Decomp/decomprawdata.csv")
+
+nrow(decomp)
+ncol(decomp)
+colnames(decomp)
+decomp=decomp[decomp$AFDM!=0,]
+nrow(decomp)
+
+```
+
+
