@@ -18,8 +18,23 @@ decomp=read.csv("C:/Users/Colleen/OneDrive/Documents/School/Research/Data/Decomp
 nrow(decomp)
 ncol(decomp)
 colnames(decomp)
-decomp=decomp[decomp$AFDM!=0,]
+#Remove Samples that have not been collected yet
+decomp=decomp[!is.na(decomp$TotalLeafWeight),]
+#...and the two that I haven't ashed yet and don't have final weights for
+decomp=decomp[!is.na(decomp$LeafTinAFDM),]
 nrow(decomp)
+
+
+#ANOVA. RV: dryweight, EV: Harvest and species
+dryweightsoil=as.numeric(as.character(decomp$dryweightsoil))
+try=aov(decomp$PropInitial~decomp$Harvest*decomp$Species)
+summary(try)
+plot(AFDM~Harvest, data=decomp)
+
+is.numeric(decomp$PropInitial)
+
+
+
 
 ```
 
