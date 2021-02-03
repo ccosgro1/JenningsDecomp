@@ -1,0 +1,177 @@
+---
+title: "DOPA Enzyme Organization"
+author: "Colleen Cosgrove"
+date: "October 15, 2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load data}
+raw.dat=read.delim("DataTxtFiles/dopaenzymes.txt", header=FALSE)
+weight.dat=read.delim("DataTxtFiles/sampleweights.txt")
+```
+
+```{r one row}
+#combine duplicate DOPA or H2O2 columns for each sample
+n.row.raw=nrow(raw.dat)
+raw.dat=subset(raw.dat,select=-c(3))
+#keeps track of what row we are on
+i=1
+#keeps track of plate that we're on
+m=9
+#for loop to keep plate names in individual rows, but combine columns from duplicated DOPA or H2O2 values. Remove columns later.
+for(i in 1:n.row.raw){
+  if(raw.dat[i,1]=="dopa"|raw.dat[i,1]=="h2o2") next
+  x=c(as.numeric(as.character(raw.dat[i,4])),as.numeric(as.character(raw.dat[i,5])))
+  raw.dat[i,4]=mean(x)
+  y=c(as.numeric(as.character(raw.dat[i,7])),as.numeric(as.character(raw.dat[i,8])))
+  raw.dat[i,7]=mean(y)
+  z=c(as.numeric(as.character(raw.dat[i,10])),as.numeric(as.character(raw.dat[i,11])))
+  raw.dat[i,10]=mean(z)
+}
+
+#remove the now duplicated, unneccessay columns
+raw.dat=subset(raw.dat,select=-c(5,8,11))
+
+#move sample name from C5 to C4.
+for(i in 1:n.row.raw){
+  if(raw.dat[i,1]=="dopa"|raw.dat[i,1]=="h2o2") {
+    raw.dat[i,4]=as.character(raw.dat[i,5])
+    raw.dat[i,5]="NA"}
+  else{next}
+}
+# we can ignore the warnings produced. They're just to tell you that NA's were produced. But, like, you put them there, sooo yeah? We'll remove them with the next for loop.
+
+#this code will rearrange samples so all values are within one row
+n.row.raw=nrow(raw.dat)
+n.plate=n.row.raw/9
+plate.dat=matrix(nrow=n.plate, ncol=72)
+#The iterator i is set by the for loop command below, and keeps track of the row in the raw data.
+#This iterator keeps track of what plate we are on.
+k=1
+#This iterator keeps track of what row we are on within a plate.
+j=1
+#These iterators keep track of the correct columns within a plate row to fill in.
+m=1
+n=8
+for(i in 1:n.row.raw){
+	plate.dat[k,m:n]=as.matrix(raw.dat[i,1:8])
+	m=ifelse(j==9,1,n+1)
+	n=ifelse(j==9,8,n+8)
+	k=ifelse(j==9,k+1,k)
+	j=ifelse(j==9,1,j+1)
+}
+
+plate.dat=as.data.frame(plate.dat)
+```
+
+```{plate summary}
+# This code provides a summary of each column in each plate.
+# There are 12 columns in the plate, each containing a different type of assay (blanks, sample+MUB, etc.).
+# Look carefully at the values here, because it is very important to look 
+# for outliers in the data that enlarge a column standard deviation.
+# If you see any suspicious columns, go back to the original data and look at the well values for that column.
+plate.summary=matrix(nrow=n.plate,ncol=24)
+p=0
+#The iterator here is going through sample plate columns (i.e., blanks, then buffer+MUB, etc.)
+for(i in 0:7){
+	vals=matrix(as.numeric(as.matrix(plate.dat[,c(9+i,17+i,25+i,33+i,41+i,49+i,57+i,65+i)])),nrow=n.plate)
+	plate.summary[,i*3+1]=apply(vals,1,mean)
+	plate.summary[,i*3+2]=apply(vals,1,sd)
+	plate.summary[,i*3+3]=100*(plate.summary[,i*3+2]/plate.summary[,i*3+1])
+}
+plate.summary=data.frame(plate.summary)
+colnames(plate.summary)=c("Blank_Ave","Blank_SD","Blank_CV","Neg_Ave","Neg_SD","Neg_CV","S1Buf_Ave","S1Buf_SD","S1Buf_CV","S1Sub1_Ave","S1Sub1_SD","S1Sub1_CV","S2Buf_Ave","S2Buf_SD","S2Buf_CV","S2Sub1_Ave","S2Sub1_SD","S2Sub1_CV","S3Buf_Ave","S3Buf_SD","S3Buf_CV","S3Sub1_Ave","S3Sub1_SD","S3Sub1_CV")
+round(plate.summary,digits=1)
+plate.summary
+```
+
+```{r constants}
+#########################################
+# Constants that depend on your laboratory procedures.  
+# Make sure these match what you did in the lab!!!!!!!!!!!!!!
+
+enz.const=matrix(nrow=2,ncol=4)
+colnames(enz.const)=c("Enz","hrs","vol.pip","nmol")
+# Enzymes tested.  Names must match what is in datafile.  Case-sensitive.
+enz.const[,1]=c("dopa","h2o2")
+# Time of incubtation for each enzyme.  Time is shown in hours.
+enz.const[,2]=c(4, 4)
+# Volume of sample used in each well, in mL.
+enz.const[,3]=c(0.2, 0.2)
+# Nanomoles of substrate and MUB pipetted into assay wells and controls.
+enz.const[,4]=c(0.5, 0.5)
+edit(enz.const)
+
+# Nanomoles of substrate and MUB pipetted into assay wells and controls.
+nmol=0.5
+```
+
+```{r calculations}
+# Calculate average of Blank wells in each plate.  
+# These are the wells with only buffer (column 1 on plate).
+blanks=matrix(as.numeric(as.matrix(plate.dat[,c(9,17,25,33,41,49,57,65)])),nrow=n.plate)
+blank.ave=apply(blanks,1,mean)
+
+# Calculate fluorescence due to unhydrolyzed substrate.  
+# These are the wells with buffer+substrate (column 2 on plate).
+# Blank is subtracted below.
+substrate.only.raw=matrix(as.numeric(as.matrix(plate.dat[,c(10,18,26,34,42,50,58,66)])),nrow=n.plate)
+substrate.only.raw.ave=apply(substrate.only.raw,1,mean)
+# Subtract the blanks from unhydrolyzed substrate fluorescence.
+substrate.only.ave=substrate.only.raw.ave-blank.ave
+
+# These are the wells with sample+buffer (columns 4,7,10 on plate).
+# Blank is subtracted below.
+sample.1.buf.raw=matrix(as.numeric(as.matrix(plate.dat[,c(11,19,27,35,43,51,59,67)])),nrow=n.plate)
+sample.1.buf.raw.ave=(apply(sample.1.buf.raw,1,mean))-blank.ave
+sample.2.buf.raw=matrix(as.numeric(as.matrix(plate.dat[,c(13,21,29,37,45,53,61,69)])),nrow=n.plate)
+sample.2.buf.raw.ave=(apply(sample.2.buf.raw,1,mean))-blank.ave
+sample.3.buf.raw=matrix(as.numeric(as.matrix(plate.dat[,c(15,23,31,39,47,55,63,71)])),nrow=n.plate)
+sample.3.buf.raw.ave=(apply(sample.3.buf.raw,1,mean))-blank.ave
+
+# Assay. These are the wells with sample+substrate (columns 5,8,11 - these include 6,9,12 respecitively that we merged in the first forloop)
+sample.1.que.raw=matrix(as.numeric(as.matrix(plate.dat[,c(12,20,28,36,44,52,60,68)])),nrow=n.plate)
+sample.1.que.raw.ave=apply(sample.1.que.raw,1,mean)-blank.ave
+sample.2.que.raw=matrix(as.numeric(as.matrix(plate.dat[,c(14,22,30,38,46,54,62,70)])),nrow=n.plate)
+sample.2.que.raw.ave=apply(sample.2.que.raw,1,mean)-blank.ave
+sample.3.que.raw=matrix(as.numeric(as.matrix(plate.dat[,c(16,24,32,40,48,56,64,72)])),nrow=n.plate)
+sample.3.que.raw.ave=apply(sample.3.que.raw,1,mean)-blank.ave
+
+
+# Calculate net absorbance for each sample
+sample.1.net.ab=sample.1.que.raw.ave-sample.1.buf.raw.ave-substrate.only.ave
+sample.2.net.ab=sample.2.que.raw.ave-sample.2.buf.raw.ave-substrate.only.ave
+sample.3.net.ab=sample.3.que.raw.ave-sample.3.buf.raw.ave-substrate.only.ave
+
+# Calculate nmol/hr/mL assay.
+sample.nmol.mL=matrix(nrow=n.plate*3, ncol=3)
+for(i in 1:n.plate){
+	sample.nmol.mL[(3*(i-1)+1):(3*(i-1)+3),1]=enz.const[plate.dat[i,1]==enz.const[,1],1]
+	sample.nmol.mL[3*(i-1)+1,2]=as.character(plate.dat[i,2])
+	sample.nmol.mL[3*(i-1)+2,2]=as.character(plate.dat[i,3])
+	sample.nmol.mL[3*(i-1)+3,2]=as.character(plate.dat[i,4])
+	hrs.i=as.numeric(enz.const[plate.dat[i,1]==enz.const[,1],2])
+	vol.pip.i=as.numeric(enz.const[plate.dat[i,1]==enz.const[,1],3])
+	sample.nmol.mL[3*(i-1)+1,3]=sample.1.net.ab[i]/(7.9*hrs.i*vol.pip.i)
+	sample.nmol.mL[3*(i-1)+2,3]=sample.2.net.ab[i]/(7.9*hrs.i*vol.pip.i)
+	sample.nmol.mL[3*(i-1)+3,3]=sample.3.net.ab[i]/(7.9*hrs.i*vol.pip.i)
+}
+colnames(sample.nmol.mL)=c("Enzyme","SampleID","nmol_per_ml")
+sample.nmol.mL
+
+# Calculate nmol/hr/g sample (in column called "activity").
+sample.nmol.g=cbind(sample.nmol.mL,weight.dat[match(sample.nmol.mL[,2],weight.dat$SampleID),])
+sample.nmol.g=na.omit(sample.nmol.g)
+sample.nmol.g$activity=as.numeric(as.matrix(sample.nmol.g$nmol_per_ml))*sample.nmol.g$volume/as.numeric(as.character(sample.nmol.g$enz.wt))
+sample.nmol.g
+
+write.csv(sample.nmol.g,"DataTxtFiles/dopaenzymeactivity.csv",row.names=FALSE)
+```
+
+

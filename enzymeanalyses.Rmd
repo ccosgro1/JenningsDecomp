@@ -1,0 +1,403 @@
+---
+title: "Untitled"
+author: "Colleen Cosgrove"
+date: "July 22, 2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load data}
+enzymeact=read.csv("enzymeactivityorganized.csv")
+dim(enzymeact)
+na.omit(enzymeact)
+plotnames=read.csv("C:/Users/Colleen/OneDrive/Documents/School/Research/Data/Decomp/decompsampleplots.csv")
+decomp=read.csv("C:/Users/Colleen/OneDrive/Documents/School/Research/Data/Decomp/decomprawdata.csv")
+colnames(plotnames)[1]="Sample"
+colnames(decomp)[1]="Sample"
+enz.dat=merge(plotnames,decomp,by="Sample")
+enz.dat=merge(enz.dat,enzymeact,by="Sample")
+dim(enz.dat)
+
+
+library(vegan)
+library(lme4)
+library(nlme)
+library(ggplot2)
+```
+
+
+```{r glmm enzyme by species, ecotone and harvest}
+colnames(enz.dat)
+bglu=lme(bglu~Species*Ecotone*Harvest,random=~1|Plot,data=enz.dat)
+summary(bglu)
+
+enz.bcell=enz.dat
+enz.bcell=enz.bcell[!is.na(enz.bcell$bcell),]
+bcell=lme(bcell~Species*Ecotone*Harvest,random=~1|Plot,data=enz.bcell)
+summary(bcell)
+
+enz.bxyl=enz.dat
+enz.bxyl=enz.bxyl[!is.na(enz.bxyl$bxyl),]
+bxyl=lme(bxyl~Species*Ecotone*Harvest,random=~1|Plot,data=enz.bxyl)
+summary(bxyl)
+
+enz.lap=enz.dat
+enz.lap=enz.lap[!is.na(enz.lap$lap),]
+lap=lme(lap~Species*Ecotone*Harvest,random=~1|Plot,data=enz.lap)
+summary(lap)
+
+enz.nag=enz.dat
+enz.nag=enz.nag[!is.na(enz.nag$nag),]
+nag=lme(nag~Species*Ecotone*Harvest,random=~1|Plot,data=enz.nag)
+summary(nag)
+
+enz.phos=enz.dat
+enz.phos=enz.phos[!is.na(enz.phos$phos),]
+phos=lme(phos~Species*Ecotone*Harvest,random=~1|Plot,data=enz.phos)
+summary(phos)
+```
+
+```{r plot}
+plot(bglu~Species*Harvest,data=enz.dat)
+plot(bcell~Species*Harvest,data=enz.bcell)
+plot(bxyl~Species*Harvest,data=enz.bxyl)
+plot(phos~Species*Harvest,data=enz.phos)
+plot(lap~Species*Harvest,data=enz.lap)
+plot(nag~Species*Harvest,data=enz.nag)
+
+##ggplot
+#subset into harvests and enzymes
+bgluh1=enz.dat[enz.dat$Harvest=="H1",]
+bgluh2=enz.dat[enz.dat$Harvest=="H2",]
+bgluh3=enz.dat[enz.dat$Harvest=="H3",]
+bcellh1=enz.bcell[enz.bcell$Harvest=="H1",]
+bcellh2=enz.bcell[enz.bcell$Harvest=="H2",]
+bcellh3=enz.bcell[enz.bcell$Harvest=="H3",]
+bxylh1=enz.bxyl[enz.bxyl$Harvest=="H1",]
+bxylh2=enz.bxyl[enz.bxyl$Harvest=="H2",]
+bxylh3=enz.bxyl[enz.bxyl$Harvest=="H3",]
+nagh1=enz.nag[enz.nag$Harvest=="H1",]
+nagh2=enz.nag[enz.nag$Harvest=="H2",]
+nagh3=enz.nag[enz.nag$Harvest=="H3",]
+laph1=enz.lap[enz.lap$Harvest=="H1",]
+laph2=enz.lap[enz.lap$Harvest=="H2",]
+laph3=enz.lap[enz.lap$Harvest=="H3",]
+phosh1=enz.phos[enz.phos$Harvest=="H1",]
+phosh2=enz.phos[enz.phos$Harvest=="H2",]
+phosh3=enz.phos[enz.phos$Harvest=="H3",]
+sdbglu=sd(enz.dat$bglu)
+
+
+
+##bar plots of enzyme activity
+ggplot(bgluh1,aes(fill=Species,y=bglu,x=Ecotone)) +
+  geom_bar(position="dodge",stat="identity")+
+  geom_errorbar(aes(ymin=(mean(bglu)-sdbglu),ymax=(mean(bglu)+sdbglu)),width=0.2, position=position_dodge(0.9))+
+  ylab("Bglu Activity")+
+  scale_y_continuous(expand=c(0,0),limits=c(0,50000))+
+  ggtitle("Bglu Harvest 1")+
+  #geom_errorbar(stat="identity", color="black")+
+  theme_bw()+
+  theme(legend.position="none",
+        plot.margin = margin(5,5,5,5),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+ggplot(bgluh2,aes(fill=Species,y=bglu,x=Ecotone)) +
+  geom_bar(position="dodge",stat="identity")+
+   #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
+  ylab("Bglu Activity")+
+  scale_y_continuous(expand=c(0,0),limits=c(0,50000))+
+  ggtitle("Bglu Harvest 2")+
+  theme_bw()+
+  theme(legend.position="none",
+        plot.margin = margin(5,5,5,5),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+ggplot(bgluh3,aes(fill=Species,y=bglu,x=Ecotone)) +
+  geom_bar(position="dodge",stat="identity")+
+   #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
+  ylab("Bglu Activity")+
+  scale_y_continuous(expand=c(0,0),limits=c(0,50000))+
+  ggtitle("Bglu Harvest 3")+
+  theme_bw()+
+  theme(legend.position=c(0.75,0.8),
+        plot.margin = margin(5,5,5,5),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+
+#### bcell ####
+ggplot(bcellh1,aes(fill=Species,y=bcell,x=Ecotone)) +
+  geom_bar(position="dodge",stat="identity")+
+  #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
+  ylab("bcell Activity")+
+  scale_y_continuous(expand=c(0,0),limits=c(0,10000))+
+  ggtitle("bcell Harvest 1")+
+  theme_bw()+
+  theme(legend.position="none",
+        plot.margin = margin(5,5,5,5),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+ggplot(bcellh2,aes(fill=Species,y=bcell,x=Ecotone)) +
+  geom_bar(position="dodge",stat="identity")+
+   #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
+  ylab("bcell Activity")+
+  scale_y_continuous(expand=c(0,0),limits=c(0,10000))+
+  ggtitle("bcell Harvest 2")+
+  theme_bw()+
+  theme(legend.position="none",
+        plot.margin = margin(5,5,5,5),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+ggplot(bcellh3,aes(fill=Species,y=bcell,x=Ecotone)) +
+  geom_bar(position="dodge",stat="identity")+
+   #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
+  ylab("bcell Activity")+
+  scale_y_continuous(expand=c(0,0),limits=c(0,10000))+
+  ggtitle("bcell Harvest 3")+
+  theme_bw()+
+  theme(legend.position=c(0.75,0.8),
+        plot.margin = margin(5,5,5,5),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+
+#### bxyl ####
+ggplot(bxylh1,aes(fill=Species,y=bxyl,x=Ecotone)) +
+  geom_bar(position="dodge",stat="identity")+
+  #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
+  ylab("bxyl Activity")+
+  scale_y_continuous(expand=c(0,0),limits=c(0,5000))+
+  ggtitle("bxyl Harvest 1")+
+  theme_bw()+
+  theme(#legend.position="none",
+        plot.margin = margin(5,5,5,5),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+ggplot(bxylh2,aes(fill=Species,y=bxyl,x=Ecotone)) +
+  geom_bar(position="dodge",stat="identity")+
+   #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
+  ylab("bxyl Activity")+
+  scale_y_continuous(expand=c(0,0),limits=c(0,5000))+
+  ggtitle("bxyl Harvest 2")+
+  theme_bw()+
+  theme(#legend.position="none",
+        plot.margin = margin(5,5,5,5),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+ggplot(bxylh3,aes(fill=Species,y=bxyl,x=Ecotone)) +
+  geom_bar(position="dodge",stat="identity")+
+   #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
+  ylab("bxyl Activity")+
+  scale_y_continuous(expand=c(0,0),limits=c(0,5000))+
+  ggtitle("bxyl Harvest 3")+
+  theme_bw()+
+  theme(#legend.position="none",
+        plot.margin = margin(5,5,5,5),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+
+#### lap ####
+ggplot(laph1,aes(fill=Species,y=lap,x=Ecotone)) +
+  geom_bar(position="dodge",stat="identity")+
+  #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
+  ylab("lap Activity")+
+  scale_y_continuous(expand=c(0,0),limits=c(0,5000))+
+  ggtitle("lap Harvest 1")+
+  theme_bw()+
+  theme(#legend.position="none",
+        plot.margin = margin(5,5,5,5),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+ggplot(laph2,aes(fill=Species,y=lap,x=Ecotone)) +
+  geom_bar(position="dodge",stat="identity")+
+   #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
+  ylab("lap Activity")+
+  scale_y_continuous(expand=c(0,0),limits=c(0,5000))+
+  ggtitle("lap Harvest 2")+
+  theme_bw()+
+  theme(#legend.position="none",
+        plot.margin = margin(5,5,5,5),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+ggplot(laph3,aes(fill=Species,y=lap,x=Ecotone)) +
+  geom_bar(position="dodge",stat="identity")+
+   #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
+  ylab("lap Activity")+
+  scale_y_continuous(expand=c(0,0),limits=c(0,5000))+
+  ggtitle("lap Harvest 3")+
+  theme_bw()+
+  theme(#legend.position="none",
+        plot.margin = margin(5,5,5,5),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+
+##bar plots of enzyme activity
+ggplot(nagh1,aes(fill=Species,y=nag,x=Ecotone)) +
+  geom_bar(position="dodge",stat="identity")+
+  #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
+  ylab("nag Activity")+
+  scale_y_continuous(expand=c(0,0),limits=c(0,10000))+
+  ggtitle("nag Harvest 1")+
+  theme_bw()+
+  theme(legend.position="none",
+        plot.margin = margin(5,5,5,5),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+ggplot(nagh2,aes(fill=Species,y=nag,x=Ecotone)) +
+  geom_bar(position="dodge",stat="identity")+
+   #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
+  ylab("nag Activity")+
+  scale_y_continuous(expand=c(0,0),limits=c(0,10000))+
+  ggtitle("nag Harvest 2")+
+  theme_bw()+
+  theme(legend.position="none",
+        plot.margin = margin(5,5,5,5),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+ggplot(nagh3,aes(fill=Species,y=nag,x=Ecotone)) +
+  geom_bar(position="dodge",stat="identity")+
+   #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
+  ylab("nag Activity")+
+  scale_y_continuous(expand=c(0,0),limits=c(0,10000))+
+  ggtitle("nag Harvest 3")+
+  theme_bw()+
+  theme(legend.position=c(0.75,0.8),
+        plot.margin = margin(5,5,5,5),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+
+##bar plots of enzyme activity
+ggplot(phosh1,aes(fill=Species,y=phos,x=Ecotone)) +
+  geom_bar(position="dodge",stat="identity")+
+  #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
+  ylab("phos Activity")+
+  scale_y_continuous(expand=c(0,0),limits=c(0,50000))+
+  ggtitle("phos Harvest 1")+
+  theme_bw()+
+  theme(#legend.position="none",
+        plot.margin = margin(5,5,5,5),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+ggplot(phosh2,aes(fill=Species,y=phos,x=Ecotone)) +
+  geom_bar(position="dodge",stat="identity")+
+   #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
+  ylab("phos Activity")+
+  scale_y_continuous(expand=c(0,0),limits=c(0,50000))+
+  ggtitle("phos Harvest 2")+
+  theme_bw()+
+  theme(#legend.position="none",
+        plot.margin = margin(5,5,5,5),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+ggplot(phosh3,aes(fill=Species,y=phos,x=Ecotone)) +
+  geom_bar(position="dodge",stat="identity")+
+   #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
+  ylab("phos Activity")+
+  scale_y_continuous(expand=c(0,0),limits=c(0,50000))+
+  ggtitle("phos Harvest 3")+
+  theme_bw()+
+  theme(#legend.position="none",
+        plot.margin = margin(5,5,5,5),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+
+```
+
+
+
+
+

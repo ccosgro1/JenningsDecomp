@@ -11,31 +11,193 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, AFDM Plotting}
-#Load Data
+```{r Add plot andecosys to dataset}
 decomp=read.csv("C:/Users/Colleen/OneDrive/Documents/School/Research/Data/Decomp/decomprawdata.csv")
+plotnames=read.csv("C:/Users/Colleen/OneDrive/Documents/School/Research/Data/Decomp/decompsampleplots.csv")
+colnames(plotnames)
+decomp=merge(decomp, plotnames)
+decomp=decomp[decomp$Harvest=="H1"|decomp$Harvest=="H2"|decomp$Harvest=="H3"|decomp$Harvest=="H0",]
+colnames(decomp)[1]="Sample"
+dim(decomp)
+#decomp=na.omit(decomp)
 
+#read these columns correctly so things work later. Important for plotting and the glmm.
+decomp$Harvest<-as.factor(as.character(decomp$Harvest))
+decomp$PropInitial<-as.numeric(as.character(decomp$PropInitial))
+
+rownames(decomp)=decomp[,1]
+library(ggplot2)
+library(lattice)
+library(gridExtra)
+library(nlme)
+```
+
+
+```{r AsFDM Plotting}
 nrow(decomp)
 ncol(decomp)
 colnames(decomp)
 #Remove Samples that have not been collected yet
 decomp=decomp[!is.na(decomp$TotalLeafWeight),]
-#...and the two that I haven't ashed yet and don't have final weights for
-decomp=decomp[!is.na(decomp$LeafTinAFDM),]
+decomp=decomp[!is.na(decomp$propsoil),]
 nrow(decomp)
 
 
 #ANOVA. RV: dryweight, EV: Harvest and species
-dryweightsoil=as.numeric(as.character(decomp$dryweightsoil))
-try=aov(decomp$PropInitial~decomp$Harvest*decomp$Species)
-summary(try)
-plot(AFDM~Harvest, data=decomp)
+afdmharvest=aov(decomp$PropInitial~decomp$Harvest*decomp$Species)
+#afdmharvest=aov(decomp$PropInitial~decomp$Harvest*decomp$Species*decomp$Ecotone)
+summary(afdmharvest)
+TukeyHSD(afdmharvest)
+plot(decomp$PropInitial~decomp$Harvest*decomp$Species, ylim=c(0,1))
+plot(decomp$PropInitial~decomp$Ecosystem)
 
-is.numeric(decomp$PropInitial)
+#ANOVA. RV: dryweight, EV: harvest and ecosystem
+afdmeco=aov(decomp$PropInitial~decomp$Harvest*decomp$Species)
+summary(afdmeco)
+TukeyHSD(afdmeco)
 
 
-
-
+herewego=lme(PropInitial~Harvest*Species*Ecotone, random=~1|Plot,data=decomp)
+#herewego=lmer(as.numeric(as.character(PropInitial))~Harvest+Species+Ecotone +(1|Plot),decomp)
+summary(herewego)
 ```
 
+```{r plots}
+#subset data into species
+maple=decomp[decomp$Species=="ACESAC",]
+oak=decomp[decomp$Species=="QUERUB",]
+hickory=decomp[decomp$Species=="CAROVA",]
+mapleeco=maple[maple$Ecotone=="Ecotone",]
+mapleeco=mapleeco[mapleeco$Ecosystem=="BU"|mapleeco$Ecosystem=="RU"|mapleeco$Ecosystem=="RB",]
+oakeco=oak[oak$Ecotone=="Ecotone",]
+oakeco=oakeco[oakeco$Ecosystem=="BU"|oakeco$Ecosystem=="RU"|oakeco$Ecosystem=="RB",]
+hickoryeco=hickory[hickory$Ecotone=="Ecotone",]
+hickoryeco=hickoryeco[hickoryeco$Ecosystem=="BU"|hickoryeco$Ecosystem=="RU"|hickoryeco$Ecosystem=="RB",]
+
+#plot box and whiskers
+par(mfrow=c(2,3))
+par(tck=0.025)
+par(pin=c(4,3),mar=c(4,4,2,1))
+plot(hickory$Harvest,hickory$PropInitial, main="Shagbark Hickory", ylab="Prop Initial", xlab=NULL, ylim=c(0,1)) #has outlier above 1
+plot(maple$Harvest,maple$PropInitial, main="Sugar Maple", ylab="Prop Initial", xlab=NULL, ylim=c(0,1))
+plot(oak$Harvest,oak$PropInitial, main="Red Oak", ylab="Prop Initial", xlab=NULL,  ylim=c(0,1))
+plot(hickoryeco$Harvest,hickoryeco$PropInitial, main="Hickory Ecotones", ylab="Prop Initial", xlab="Harvest", ylim=c(0,1))
+plot(mapleeco$Harvest,mapleeco$PropInitial, main="Maple Ecotones", ylab="Prop Initial", xlab="Harvest", ylim=c(0,1))
+plot(oakeco$Harvest,oakeco$PropInitial, main="Oak Ecotones", ylab="Prop Initial", xlab="Harvest", ylim=c(0,1))
+
+#breakout each ecosystem and species, I guess? There's gotta be a better way
+ecotones=decomp
+
+#ggplot attempt for line graphs
+
+plot1=ggplot(data=hickory, aes(x=Harvest,y=PropInitial,group=Ecotone,color=Ecotone))+
+  stat_summary(geom="line",size=1.5, fun.y=mean) +
+  stat_summary(geom="errorbar",width=0.2)+
+  ggtitle("Shagbark Hickory")+
+  scale_x_discrete(expand=c(0,0),labels=c("H0"="Dec 2017","H1"="Jun 2018","H2"="Jan 2019","H3"="Jun 2019"))+
+  ylim(0,1)+
+  ylab("Proportion Mass Loss")+
+  theme_bw()+
+  theme(legend.position="none",
+        plot.margin = margin(10,10,10,10),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+
+plot2=ggplot(data=maple, aes(x=Harvest,y=PropInitial,group=Ecotone,color=Ecotone))+
+  stat_summary(geom="line",size=1.5, fun.y=mean) +
+  stat_summary(geom="errorbar",width=0.2)+
+  scale_x_discrete(expand=c(0,0),labels=c("H0"="Dec 2017","H1"="Jun 2018","H2"="Jan 2019","H3"="Jun 2019"))+
+  ggtitle("Sugar Maple")+
+  ylim(0,1)+
+  ylab("Proportion Mass Loss")+
+  theme_bw()+
+  theme(legend.position="none",
+        plot.margin = margin(10,10,10,10),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+
+plot3=ggplot(data=oak,aes(x=Harvest,y=PropInitial,group=Ecotone,color=Ecotone))+
+  stat_summary(geom="line",size=1.5, fun.y=mean)+
+  stat_summary(geom="errorbar",width=0.2)+
+  ggtitle("Red Oak")+
+  ylim(0,1)+
+  ylab("Proportion Mass Loss")+
+  scale_x_discrete(expand=c(0,0),labels=c("H0"="Dec 2017","H1"="Jun 2018","H2"="Jan 2019","H3"="Jun 2019"))+
+  theme_bw()+
+  theme(legend.position=c(0.75,0.8),
+        plot.margin = margin(10,10,10,10),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+
+plot4=ggplot(data=hickoryeco, aes(x=Harvest,y=PropInitial,group=Ecosystem,color=Ecosystem))+
+  stat_summary(geom="line",size=1.5, fun.y=mean) +
+  stat_summary(geom="errorbar",width=0.2)+
+  ggtitle("Hickory Ecotone")+
+  scale_x_discrete(expand=c(0,0),labels=c("H0"="Dec 2017","H1"="Jun 2018","H2"="Jan 2019","H3"="Jun 2019"))+
+  ylim(0,1)+
+  ylab("Proportion Mass Loss")+
+  theme_bw()+
+  theme(legend.position="none",
+        plot.margin = margin(10,10,10,10),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+
+plot5=ggplot(data=mapleeco, aes(x=Harvest,y=PropInitial,group=Ecosystem,color=Ecosystem))+
+  stat_summary(geom="line",size=1.5, fun.y=mean) +
+  stat_summary(geom="errorbar",width=0.2)+
+  ggtitle("Maple Ecotone")+
+  ylim(0,1)+
+  ylab("Proportion Mass Loss")+
+  scale_x_discrete(expand=c(0,0),labels=c("H0"="Dec 2017","H1"="Jun 2018","H2"="Jan 2019","H3"="Jun 2019"))+
+  theme_bw()+
+  theme(legend.position="none",
+        plot.margin = margin(10,10,10,10),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+
+plot6=ggplot(data=oakeco,aes(x=Harvest,y=PropInitial,group=Ecosystem,color=Ecosystem))+
+  stat_summary(geom="line",size=1.5, fun.y=mean)+
+  stat_summary(geom="errorbar",width=0.2)+
+  ggtitle("Oak Ecotone")+
+  ylim(0,1)+
+  ylab("Proportion Mass Loss")+
+  scale_x_discrete(expand=c(0,0),labels=c("H0"="Dec 2017","H1"="Jun 2018","H2"="Jan 2019","H3"="Jun 2019"))+
+  theme_bw()+
+  theme(legend.position=c(0.75,0.8),
+        plot.margin = margin(10,10,10,10),
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_text(size=12),
+        axis.text.y = element_text(size=12),
+        axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+
+grid.arrange(plot1,plot2,plot3,plot4,plot5,plot6, nrow=2, ncol=3)
+```
 
