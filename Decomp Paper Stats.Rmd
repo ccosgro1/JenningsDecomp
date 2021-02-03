@@ -127,6 +127,10 @@ decay.k.data.querub=as.data.frame(cbind(decay.k.meta.querub,decompk.querub))
 colnames(decay.k.data.querub)=c("Species","Plot","decompk")
 decay.k.data.querub
 
+##merge all of these together so they're all accessible.
+decompk.allspec=data.frame(nrow=199, ncol=3)
+decompk.allspec=rbind(decay.k.data.acesac,decay.k.data.carova,decay.k.data.querub)
+decompk.allspec
 
 ###########ERROR
 #since there aren't uniform collections from every single plot, the lm function cannot work. Suggestions?
