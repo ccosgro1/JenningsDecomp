@@ -1,0 +1,298 @@
+---
+title: "enzyme activity"
+author: "Colleen Cosgrove"
+date: "December 3, 2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Load data}
+## Load decomp and soil data
+decomp.dat=read.csv("decomprawdata.csv",header = TRUE)
+names(decomp.dat)[names(decomp.dat)=="ï..Bag.ID"]<-"Bag.ID"
+decomp.samp=read.csv("decompsampleplots.csv",header=TRUE)
+names(decomp.samp)[names(decomp.samp)=="ï..Bag.ID"]<-"Bag.ID"
+#add plot and ecosystem type in for each of the samples bags
+decomp.dat=merge(decomp.samp,decomp.dat)
+soil.dat=read.csv("C:/Users/Colleen/OneDrive/Documents/School/Grad School/SpatialStats/soil data May 08 for tree plots.csv", header=T)
+
+#merge decomp and soil data
+decomp.dat=merge(decomp.dat,soil.dat)
+dim(decomp.dat)
+decomp.dat=decomp.dat[!is.na(decomp.dat$Time.mo),]
+decomp.dat=droplevels(decomp.dat)
+
+###############
+## Load enzyme activity data
+hydroact.dat=read.csv("DataTxtFiles/enzymeactivity.csv",header=TRUE)
+dopaact.dat=read.csv("DataTxtFiles/dopaenzymeactivity.csv", header=TRUE)
+
+## Log transform enzyme activity data
+colnames(hydroact.dat)
+hydroact.dat$activity.lg=log(as.numeric(as.character(hydroact.dat$activity)))
+dopaact.dat$activity.lg=log(as.numeric(as.character(dopaact.dat$activity)))
+
+#merge enzyme and site data
+hydroact.dat=merge(hydroact.dat,decomp.samp,by="Bag.ID")
+hydroact.dat=merge(hydroact.dat,soil.dat)
+dopaact.dat=merge(dopaact.dat,decomp.samp)
+dopaact.dat=merge(dopaact.dat,soil.dat)
+```
+
+```{r load packages}
+library(ggplot2)
+library(nlme)
+library(lme4)
+```
+
+```{r decay rate K}
+#remove rows that are 0 for PropInitial - creates NANs in the log tranformation, otherwise and we can't use those.
+decomp.dat=subset(decomp.dat,as.numeric(as.character(decomp.dat$PropInitial)) > 0)
+decomp.dat.rate=decomp.dat[decomp.dat$Harvest!="H0",]
+decomp.dat.rate=droplevels(decomp.dat.rate)
+
+#subset the data by Species
+decomp.dat.rate.acesac=decomp.dat.rate[decomp.dat.rate$Species=="ACESAC",]
+
+# First order decay rate model
+decompk.acesac=matrix(nrow=66,ncol=1)
+decay.k.meta.acesac=matrix(nrow=66,ncol=2)
+
+m=1
+
+for(k in c("2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","22","23","24","A1/2","A3/4","A5/6","B1/2","B3/4","B5/6","D1/2","D3/4","D5/6","E1/2","E3/4","E5/6","G1/2","G3/4","G5/6","H1/2","H3/4","H5/6","I1/2","I3/4","I6","J1/2","J3/4","J5/6","K1/2","K3/4","K5/6","L1/2","L3/4","L5/6","P1/2","P3/4","P5/6","Q1/2","Q3/4","Q5/6","R1","R2","R4","R5","S1","S2","S4","S5")){
+      decomp.dat.acesac.k=decomp.dat.rate.acesac[decomp.dat.rate.acesac$Plot==k,]
+      reg.k=lm(log(as.numeric(as.character(decomp.dat.acesac.k$PropInitial)))~0+Harvest, data=decomp.dat.acesac.k)
+      decompk.acesac[m]=as.numeric(reg.k$coefficients)
+      decay.k.meta.acesac[m,1]="ACESAC"
+      decay.k.meta.acesac[m,2]=k
+      m=m+1
+}
+
+decompk.acesac
+decay.k.meta.acesac
+decay.k.data.acesac=as.data.frame(cbind(decay.k.meta.acesac,decompk.acesac))
+colnames(decay.k.data.acesac)=c("Species","Plot","decompk")
+decay.k.data.acesac
+
+###CAROVA
+decomp.dat.rate.carova=decomp.dat.rate[decomp.dat.rate$Species=="CAROVA",]
+
+decompk.carova=matrix(nrow=65,ncol=1)
+decay.k.meta.carova=matrix(nrow=65,ncol=2)
+
+m=1
+
+for(k in c("2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","22","23","24","A1/2","A3/4","A5/6","B1/2","B3/4","B5/6","D1/2","D3/4","D5/6","E1/2","E3/4","E5/6","G1/2","G3/4","G5/6","H1/2","H3/4","H5/6","I1/2","I3/4","I6","J1/2","J3/4","J5/6","K1/2","K3/4","K5/6","L1/2","L3/4","L5/6","P1/2","P3/4","P5/6","Q1/2","Q3/4","Q5/6","R1","R2","R4","R5","S1","S4","S5")){
+      decomp.dat.carova.k=decomp.dat.rate.carova[decomp.dat.rate.carova$Plot==k,]
+      reg.k=lm(log(as.numeric(as.character(decomp.dat.carova.k$PropInitial)))~0+Harvest, data=decomp.dat.carova.k)
+      decompk.carova[m]=as.numeric(reg.k$coefficients)
+      decay.k.meta.carova[m,1]="CAROVA"
+      decay.k.meta.carova[m,2]=k
+      m=m+1
+}
+
+decompk.carova
+decay.k.meta.carova
+decay.k.data.carova<-as.data.frame(cbind(decay.k.meta.carova,decompk.carova))
+colnames(decay.k.data.carova)=c("Species","Plot","decompk")
+decay.k.data.carova
+
+####QUERUB
+decomp.dat.rate.querub=decomp.dat.rate[decomp.dat.rate$Species=="QUERUB",]
+
+decompk.querub=matrix(nrow=68,ncol=1)
+decay.k.meta.querub=matrix(nrow=68,ncol=2)
+
+m=1
+
+for(k in c("1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","A1/2","A3/4","A5/6","B1/2","B3/4","B5/6","D1/2","D3/4","D5/6","E1/2","E3/4","E5/6","G1/2","G3/4","G5/6","H1/2","H3/4","H5/6","I1/2","I3/4","I6","J1/2","J3/4","J5/6","K1/2","K3/4","K5/6","L1/2","L3/4","L5/6","P1/2","P3/4","P5/6","Q1/2","Q3/4","Q5/6","R1","R2","R4","R5","S1","S2","S4","S5")){
+      decomp.dat.querub.k=decomp.dat.rate[decomp.dat.rate.querub$Plot==k,]
+      reg.k=lm(log(as.numeric(as.character(decomp.dat.querub.k$PropInitial)))~0+Harvest, data=decomp.dat.querub.k)
+      decompk.querub[m]=as.numeric(reg.k$coefficients)
+      decay.k.meta.querub[m,1]="QUERUB"
+      decay.k.meta.querub[m,2]=k
+      #decay.k.meta[m,3]=as.character(decomp.dat.rate.k$Bag.ID[1])
+      m=m+1
+}
+
+decompk.querub
+decay.k.meta.querub
+decay.k.data.querub=as.data.frame(cbind(decay.k.meta.querub,decompk.querub))
+colnames(decay.k.data.querub)=c("Species","Plot","decompk")
+decay.k.data.querub
+
+
+###########ERROR
+#since there aren't uniform collections from every single plot, the lm function cannot work. Suggestions?
+
+
+# ANOVA analysis
+mass.k.anova=lme(as.numeric(as.matrix(decay.k))~Species*Treatment*Tree, random=~1|fullBlock, data=decay.k.data)
+anova(mass.k.anova)
+sample.names=paste(decay.k.meta[,1],decay.k.meta[,3],decay.k.meta[,4])
+tapply(decay.k,sample.names,mean)
+sqrt(tapply(decay.k,sample.names,var))/sqrt(3)
+
+
+
+#calculate litter decomposition rate (K) value (from Olson 1963)
+#use the formula k=ln(Mt/M0)/t
+#Use of K removes the need to use harvest/sample date later on
+colnames(decomp.dat)
+decomp.dat$decompK=(-log(decomp.dat$TotDryWeight/decomp.dat$InitialLeafWeight))/decomp.dat$Time.mo
+
+```
+
+```{r subset data}
+#by transect types (e.g. R->U)
+decomp.ripup=decomp.dat[decomp.dat$TerrType=="R"|decomp.dat$TerrType=="RU"|decomp.dat$TerrType=="T-UR"|decomp.dat$TerrType=="UR"|decomp.dat$TerrType=="U",]
+decomp.ripup=decomp.ripup[!is.na(decomp.ripup$decompK),]
+decomp.botup=decomp.dat[decomp.dat$TerrType=="B"|decomp.dat$TerrType=="BU"|decomp.dat$TerrType=="T-UB"|decomp.dat$TerrType=="UB"|decomp.dat$TerrType=="U",]
+decomp.botup=decomp.botup[!is.na(decomp.botup$decompK),]
+decomp.ripbot=decomp.dat[decomp.dat$TerrType=="R"|decomp.dat$TerrType=="RB"|decomp.dat$TerrType=="T-RB"|decomp.dat$TerrType=="BR"|decomp.dat$TerrType=="B",]
+decomp.ripbot=decomp.ripbot[!is.na(decomp.ripbot$decompK),]
+
+#by transect types with LUMPED transitions
+```
+
+```{r date collected}
+#check to make sure there are no significant differences between dates collected within harvests.
+#subsetdata
+collection1=decomp.dat[decomp.dat$Harvest=="H1",]
+collection1=droplevels(collection1)
+collection2=decomp.dat[decomp.dat$Harvest=="H2",]
+collection2=droplevels(collection2)
+collection3=decomp.dat[decomp.dat$Harvest=="H3",]
+collection3=droplevels(collection3)
+
+#Harvest 1
+harv1=aov(as.numeric(as.character(collection1$PropInitial))~collection1$Date.Collected)
+summary(harv1)
+plot(as.numeric(as.character(collection1$PropInitial))~collection1$Date.Collected)
+##This is significant, which is not good. However, there was only one sample collected on this date. We can either kick this sample or ignore the variation as just a function of there being no variation.
+
+#Harvest 2
+harv2=aov(as.numeric(as.character(collection2$PropInitial))~collection2$Date.Collected)
+summary(harv2)
+plot(as.numeric(as.character(collection2$PropInitial))~collection2$Date.Collected)
+
+#Harvest 3
+harv3=aov(as.numeric(as.character(collection3$PropInitial))~collection3$Date.Collected)
+summary(harv3)
+plot(as.numeric(as.character(collection3$PropInitial))~collection3$Date.Collected)
+```
+
+
+```{r mass loss linear regressions}
+## To test H1 - Decomposition rates will be slower in ecotones than in ecosystem cores. 
+## decomp by terr type and plot
+#massloss.m1=lme(decomp.dat$decompK~decomp.dat$TerrType+decomp.dat$Plot)
+#summary(massloss.m1)
+
+## decomp by terr type and plot WITHIN transect types
+massloss.ripup=lme(decomp.ripup$decompK~decomp.ripup$TerrType,random=~1|decomp.ripup$Plot)
+summary(massloss.ripup)
+#plot
+ggplot(decomp.ripup, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=TerrType,group=TerrType))+
+  geom_point(position=position_dodge(0.2), size=4)+
+  ggtitle("RipUp TerrType")
+ 
+massloss.botup=lm(decomp.botup$decompK~decomp.botup$TerrType+decomp.botup$Plot)
+summary(massloss.botup)
+#plot
+ggplot(decomp.botup, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=TerrType,group=TerrType))+
+  geom_point(position=position_dodge(0.2), size=4)+
+  ggtitle("BotUp TerrType")
+
+massloss.ripbot=lm(decomp.ripbot$decompK~decomp.ripbot$TerrType+decomp.ripbot$Plot)
+summary(massloss.ripbot)
+ggplot(decomp.ripbot, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=TerrType,group=TerrType))+
+  geom_point(position=position_dodge(0.2), size=4)+
+  ggtitle("RipBot TerrType")
+```
+
+```{r linear model with Terr Type LUMPED TRANS}
+## decomp by terr type and plot WITHIN transect types
+massloss.ripup=lm(decomp.ripup$decompK~decomp.ripup$LumpTrans+decomp.ripup$Plot)
+summary(massloss.ripup)
+#plot
+ggplot(decomp.ripup, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=LumpTrans,group=LumpTrans))+
+  geom_point(position=position_dodge(0.2), size=4)+
+  ggtitle("RipUp Lump Trans")
+ 
+massloss.botup=lm(decomp.botup$decompK~decomp.botup$LumpTrans+decomp.botup$Plot)
+summary(massloss.botup)
+#plot
+ggplot(decomp.botup, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=LumpTrans,group=LumpTrans))+
+  geom_point(position=position_dodge(0.2), size=4)+
+  ggtitle("BotUp Lump Trans")
+
+massloss.ripbot=lm(decomp.ripbot$decompK~decomp.ripbot$LumpTrans+decomp.ripbot$Plot)
+summary(massloss.ripbot)
+ggplot(decomp.ripbot, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=LumpTrans,group=LumpTrans))+
+  geom_point(position=position_dodge(0.2), size=4)+
+  ggtitle("RipBot Lump Trans")
+```
+
+```{r linear model with Terr Type AND species}
+## To test H1 - Decomposition rates will be slower in ecotones than in ecosystem cores. 
+## decomp by terr type and plot
+#massloss.m1=lm(decomp.dat$decompK~decomp.dat$TerrType+decomp.dat$Plot)
+summary(massloss.m1)
+
+## decomp by terr type and plot WITHIN transect types
+massloss.sp.ripup=lme(decompK~TerrType*Species,random=~1|Plot,data=decomp.ripup)
+anova(massloss.sp.ripup)
+summary(massloss.sp.ripup)
+#plot
+ggplot(decomp.ripup, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=TerrType,group=TerrType))+
+  geom_point(shape=decomp.ripup$Species,position=position_dodge(0.2), size=4)+
+  ggtitle("RipUp Species TerrType")
+ 
+massloss.sp.botup=lme(decompK~TerrType*Species,random=~1|Plot,data=decomp.botup)
+anova(massloss.sp.botup)
+summary(massloss.sp.botup)
+#plot
+ggplot(decomp.botup, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=TerrType,group=TerrType))+
+  geom_point(shape=decomp.botup$Species,position=position_dodge(0.2), size=4)+
+  ggtitle("BotUp Species TerrType")
+
+massloss.sp.ripbot=lme(decompK~TerrType*Species,random=~1|Plot,data=decomp.ripbot)
+anova(massloss.sp.ripbot)
+summary(massloss.sp.ripbot)
+ggplot(decomp.ripbot, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=TerrType,group=TerrType))+
+  geom_point(shape=decomp.ripbot$Species,position=position_dodge(0.2), size=4)+
+  ggtitle("RipBot Species TerrType")
+```
+
+```{r linear model with Terr Type AND species LUMPED TRANS}
+## decomp by terr type and plot WITHIN transect types
+massloss.sp.ripup=lme(decompK~LumpTrans*Species,random=~1|Plot,data=decomp.ripup)
+anova(massloss.sp.ripup)
+summary(massloss.sp.ripup)
+#plot
+ggplot(decomp.ripup, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=LumpTrans,group=LumpTrans))+
+  geom_point(shape=decomp.ripup$Species,position=position_dodge(0.2), size=4)+
+  ggtitle("RipUp Species Lump Trans")
+ 
+massloss.sp.botup=lme(decompK~LumpTrans*Species,random=~1|Plot,data=decomp.botup)
+anova(massloss.sp.botup)
+summary(massloss.sp.botup)
+#plot
+ggplot(decomp.botup, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=LumpTrans,group=LumpTrans))+
+  geom_point(shape=decomp.botup$Species,position=position_dodge(0.2), size=4)+
+  ggtitle("BotUp Species Lump Trans")
+
+massloss.sp.ripbot=lme(decompK~LumpTrans*Species,random=~1|Plot,data=decomp.ripbot)
+anova(massloss.sp.ripbot)
+summary(massloss.sp.ripbot)
+ggplot(decomp.ripbot, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=LumpTrans,group=LumpTrans))+
+  geom_point(shape=decomp.ripbot$Species,position=position_dodge(0.2), size=4)+
+  ggtitle("RipBot Species Lump Trans")
+```
