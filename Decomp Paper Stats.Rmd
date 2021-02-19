@@ -48,6 +48,7 @@ dopaact.dat=merge(dopaact.dat,soil.dat)
 library(ggplot2)
 library(nlme)
 library(lme4)
+library(glmm)
 ```
 
 ```{r decay rate K}
@@ -133,27 +134,50 @@ decompk.allspec.row=rbind(decay.k.data.acesac,decay.k.data.carova,decay.k.data.q
 decompk.allspec.row
 
 #uneven number of rows, so can't use cbind.
-#decompk.allspec.col=data.frame(ncol=68, ncol=5)
-#decompk.allspec.col=cbind(decay.k.data.acesac,decay.k.data.carova,decay.k.data.querub)
-#decompk.allspec.col
+decompk.allspec.col=data.frame(ncol=65, ncol=5)
+decomp.k.data.acesac=decay.k.data.acesac[decay.k.data.acesac$Plot!="S2",]
+decomp.k.data.querub=decay.k.data.querub[decay.k.data.querub$Plot!="1",]
+decomp.k.data.querub=decomp.k.data.querub[decomp.k.data.querub$Plot!="21",]
+decomp.k.data.querub=decomp.k.data.querub[decomp.k.data.querub$Plot!="S2",]
+decompk.allspec.col=cbind(decomp.k.data.acesac,decay.k.data.carova,decomp.k.data.querub)
+decompk.allspec.col
+decompk.allspec.col=decompk.allspec.col[,c(1:4,6:7,9)]
+colnames(decompk.allspec.col)=c("acesac","Plot","decompk.acesac","carova","decompk.carova","querub","decompk.querub")
+decompk.allspec.col=decompk.allspec.col[1:64,]
 ```
 
-```{r stats}
-# ANOVA analysis
-mass.k.anova=lme(as.numeric(as.matrix(decompk))~Species*Treatment*Tree, random=~1|fullBlock, data=decompk.allspec)
-anova(mass.k.anova)
-sample.names=paste(decay.k.meta[,1],decay.k.meta[,3],decay.k.meta[,4])
-tapply(decay.k,sample.names,mean)
-sqrt(tapply(decay.k,sample.names,var))/sqrt(3)
+```{r RDA decomp to soil}
+decompk.col.soil=merge(decompk.allspec.col,soil.dat,by="Plot")
+dim(decompk.col.soil)
+colnames(decompk.col.soil)
+decompk.col.soil=decompk.col.soil[,c(1:2,4,6,3,5,7,8:41)]
+#Force data as.numeric
+decompk.col.soil[,5]=as.numeric(as.character(decompk.col.soil[,5]))
+decompk.col.soil[,6]=as.numeric(as.character(decompk.col.soil[,6]))
+decompk.col.soil[,7]=as.numeric(as.character(decompk.col.soil[,7]))
 
+#long variables
+decompk.rda.fulsoil = rda(decompk.col.soil[,5:7], decompk.col.soil[,17:24])
+anova(decompk.rda.fulsoil)
+RsquareAdj(decompk.rda.fulsoil)
+global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
 
+apply(decompk.col.soil[,10:42],2,sum)
+
+decompk.rda.fulsoil.none = rda(decompk.col.soil[,10:44]~1)
+decompk.rda.fulsoil = rda(decompk.col.soil[,10:44], decompk.col.soil[,55:79])
+
+decompk.rda.fulsoil.full=rda(decompk.col.soil[,10:44]~decompk.col.soil$Ptot_long+decompk.col.soil$Po_long+decompk.col.soil$pH_long+decompk.col.soil$moist_long +decompk.col.soil$ps1_long+decompk.col.soil$ps2_long+decompk.col.soil$percc_long+decompk.col.soil$cton_long+decompk.col.soil$Ptot_nug+decompk.col.soil$Po_nug+decompk.col.soil$pH_nug+decompk.col.soil$moist_nug+decompk.col.soil$ps1_nug+decompk.col.soil$ps2_nug+decompk.col.soil$percc_nug+decompk.col.soil$pomc_nug+decompk.col.soil$cton_nug+decompk.col.soil$Ptot_short+decompk.col.soil$Po_short+decompk.col.soil$pH_short+decompk.col.soil$moist_short+decompk.col.soil$ps1_short+decompk.col.soil$percc_short+decompk.col.soil$pomc_short+decompk.col.soil$cton_short)
+
+decompk.sel=ordiR2step(decompk.rda.fulsoil.none,scope=formula(decompk.rda.fulsoil.full),Pin=0.05,R2scope=TRUE)
+decompk.sel
+#######
 
 #calculate litter decomposition rate (K) value (from Olson 1963)
 #use the formula k=ln(Mt/M0)/t
 #Use of K removes the need to use harvest/sample date later on
 colnames(decomp.dat)
 decomp.dat$decompK=(-log(decomp.dat$TotDryWeight/decomp.dat$InitialLeafWeight))/decomp.dat$Time.mo
-
 ```
 
 ```{r subset data}
