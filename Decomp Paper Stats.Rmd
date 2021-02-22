@@ -155,29 +155,37 @@ decompk.col.soil=decompk.col.soil[,c(1:2,4,6,3,5,7,8:41)]
 decompk.col.soil[,5]=as.numeric(as.character(decompk.col.soil[,5]))
 decompk.col.soil[,6]=as.numeric(as.character(decompk.col.soil[,6]))
 decompk.col.soil[,7]=as.numeric(as.character(decompk.col.soil[,7]))
+decompk.col.soil=na.exclude(decompk.col.soil)
+dim(decompk.col.soil)
 
+##ALL soil variables does not have a significant effect (could be from over saturation of model from too many variables?)
 #long variables
 decompk.rda.fulsoil = rda(decompk.col.soil[,5:7], decompk.col.soil[,17:24])
 anova(decompk.rda.fulsoil)
 RsquareAdj(decompk.rda.fulsoil)
 global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
 
-apply(decompk.col.soil[,10:42],2,sum)
+decompk.rda.fulsoil.none = rda(decompk.col.soil[,5:7]~1)
+decompk.rda.fulsoil = rda(decompk.col.soil[,5:7], decompk.col.soil[,17:24])
 
-decompk.rda.fulsoil.none = rda(decompk.col.soil[,10:44]~1)
-decompk.rda.fulsoil = rda(decompk.col.soil[,10:44], decompk.col.soil[,55:79])
-
-decompk.rda.fulsoil.full=rda(decompk.col.soil[,10:44]~decompk.col.soil$Ptot_long+decompk.col.soil$Po_long+decompk.col.soil$pH_long+decompk.col.soil$moist_long +decompk.col.soil$ps1_long+decompk.col.soil$ps2_long+decompk.col.soil$percc_long+decompk.col.soil$cton_long+decompk.col.soil$Ptot_nug+decompk.col.soil$Po_nug+decompk.col.soil$pH_nug+decompk.col.soil$moist_nug+decompk.col.soil$ps1_nug+decompk.col.soil$ps2_nug+decompk.col.soil$percc_nug+decompk.col.soil$pomc_nug+decompk.col.soil$cton_nug+decompk.col.soil$Ptot_short+decompk.col.soil$Po_short+decompk.col.soil$pH_short+decompk.col.soil$moist_short+decompk.col.soil$ps1_short+decompk.col.soil$percc_short+decompk.col.soil$pomc_short+decompk.col.soil$cton_short)
+decompk.rda.fulsoil.full=rda(decompk.col.soil[,5:7]~decompk.col.soil$Ptot_long+decompk.col.soil$Po_long+decompk.col.soil$pH_long+decompk.col.soil$moist_long +decompk.col.soil$ps1_long+decompk.col.soil$ps2_long+decompk.col.soil$percc_long+decompk.col.soil$cton_long)
 
 decompk.sel=ordiR2step(decompk.rda.fulsoil.none,scope=formula(decompk.rda.fulsoil.full),Pin=0.05,R2scope=TRUE)
 decompk.sel
-#######
 
-#calculate litter decomposition rate (K) value (from Olson 1963)
-#use the formula k=ln(Mt/M0)/t
-#Use of K removes the need to use harvest/sample date later on
-colnames(decomp.dat)
-decomp.dat$decompK=(-log(decomp.dat$TotDryWeight/decomp.dat$InitialLeafWeight))/decomp.dat$Time.mo
+#nug variables
+decompk.rda.fulsoil = rda(decompk.col.soil[,5:7], decompk.col.soil[,25:33])
+anova(decompk.rda.fulsoil)
+RsquareAdj(decompk.rda.fulsoil)
+global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
+###NOT SIGNIFICANT
+
+#short variables
+decompk.rda.fulsoil = rda(decompk.col.soil[,5:7], decompk.col.soil[,34:41])
+anova(decompk.rda.fulsoil)
+RsquareAdj(decompk.rda.fulsoil)
+global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
+###NOT SIGNIFICANT
 ```
 
 ```{r subset data}
@@ -326,4 +334,58 @@ summary(massloss.sp.ripbot)
 ggplot(decomp.ripbot, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=LumpTrans,group=LumpTrans))+
   geom_point(shape=decomp.ripbot$Species,position=position_dodge(0.2), size=4)+
   ggtitle("RipBot Species Lump Trans")
+```
+
+```{r enzyme mixed model}
+colnames(dopaact.dat)
+dopaact.dat=na.exclude(dopaact.dat)
+dopaact.dat=dopaact.dat[dopaact.dat$activity.lg!="Inf",]
+dim(dopaact.dat)
+
+hydroact.dat=na.exclude(hydroact.dat)
+hydroact.dat=hydroact.dat[hydroact.dat$activity.lg!="Inf",]
+dim(hydroact.dat) #we did a fuck ton of hydrolase enzymes, thus all the rows. Dont't freak out about mix-matched data from the merge
+
+dopamod=lme(activity.lg~Enzyme+TerrType,random=~1|Plot, data=dopaact.dat)
+anova(dopamod)
+summary(dopamod)
+
+hydromod=lme(activity.lg~Enzyme*TerrType,random=~1|Plot, data=hydroact.dat)
+anova(hydromod)
+hydromod=lme(activity.lg~Enzyme*Ecotone,random=~1|Plot, data=hydroact.dat)
+anova(hydromod)
+hydromod=lme(activity.lg~Enzyme,random=~1|Plot, data=hydroact.dat)
+anova(hydromod)
+summary(hydromod)
+```
+
+```{r enzyme rda}
+#dopa enzymes ~ soil variables
+dopa.rda.fulsoil = rda(dopaact.dat[,14], dopaact.dat[,28:52])
+anova(dopa.rda.fulsoil)
+RsquareAdj(dopa.rda.fulsoil)
+global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
+
+dopa.rda.fulsoil.none = rda(dopaact.dat[,14]~1)
+dopa.rda.fulsoil = rda(dopaact.dat[,14], dopaact.dat[,28:52])
+
+dopa.rda.fulsoil.full=rda(dopaact.dat[,14]~dopaact.dat$Ptot_long+dopaact.dat$Po_long+dopaact.dat$pH_long+dopaact.dat$moist_long+dopaact.dat$ps1_long+dopaact.dat$ps2_long+dopaact.dat$percc_long+dopaact.dat$cton_long+dopaact.dat$Ptot_nug+dopaact.dat$Po_nug+dopaact.dat$pH_nug+dopaact.dat$moist_nug+dopaact.dat$ps1_nug+dopaact.dat$ps2_nug+dopaact.dat$percc_nug+dopaact.dat$cton_nug+dopaact.dat$Ptot_short+dopaact.dat$Po_short+dopaact.dat$pH_short+dopaact.dat$moist_short +dopaact.dat$ps1_short+dopaact.dat$percc_short+dopaact.dat$cton_short)
+
+dopa.sel=ordiR2step(dopa.rda.fulsoil.none,scope=formula(dopa.rda.fulsoil.full),Pin=0.05,R2scope=TRUE)
+dopa.sel
+
+# Hydro enzymes
+hydro.rda.fulsoil = rda(hydroact.dat[,14], hydroact.dat[,28:52])
+anova(hydro.rda.fulsoil)
+RsquareAdj(hydro.rda.fulsoil)
+global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
+
+hydro.rda.fulsoil.none = rda(hydroact.dat[,14]~1)
+hydro.rda.fulsoil = rda(hydroact.dat[,14], hydroact.dat[,28:52])
+
+hydro.rda.fulsoil.full=rda(hydroact.dat[,14]~hydroact.dat$Ptot_long+hydroact.dat$Po_long+hydroact.dat$pH_long+hydroact.dat$moist_long+hydroact.dat$ps1_long+hydroact.dat$ps2_long+hydroact.dat$percc_long+hydroact.dat$cton_long+hydroact.dat$Ptot_nug+hydroact.dat$Po_nug+hydroact.dat$pH_nug+hydroact.dat$moist_nug+hydroact.dat$ps1_nug+hydroact.dat$ps2_nug+hydroact.dat$percc_nug+hydroact.dat$cton_nug+hydroact.dat$Ptot_short+hydroact.dat$Po_short+hydroact.dat$pH_short+hydroact.dat$moist_short +hydroact.dat$ps1_short+hydroact.dat$percc_short+hydroact.dat$cton_short)
+
+hydro.sel=ordiR2step(hydro.rda.fulsoil.none,scope=formula(hydro.rda.fulsoil.full),Pin=0.05,R2scope=TRUE)
+hydro.sel
+
 ```
