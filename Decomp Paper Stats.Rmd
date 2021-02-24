@@ -20,6 +20,7 @@ names(decomp.samp)[names(decomp.samp)=="ï..Bag.ID"]<-"Bag.ID"
 #add plot and ecosystem type in for each of the samples bags
 decomp.dat=merge(decomp.samp,decomp.dat)
 soil.dat=read.csv("C:/Users/Colleen/OneDrive/Documents/School/Grad School/SpatialStats/soil data May 08 for tree plots.csv", header=T)
+plotdesig=read.csv("plotdesignations.csv")
 
 #merge decomp and soil data
 decomp.dat=merge(decomp.dat,soil.dat)
@@ -187,6 +188,18 @@ RsquareAdj(decompk.rda.fulsoil)
 global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
 ###NOT SIGNIFICANT
 ```
+```{r decompK lme~TerrType}
+####TO DO####
+# lme of decompk compared to TerrType
+decompkterr=merge(decompk.allspec.col,plotdesig)
+colnames(decompkterr)
+rownames(decompkterr)=c(1:63)
+carovaterr=lme(decompk.carova~TerrType,random=~1|Plot, data=decompkterr)
+anova(carovaterr)
+summary(carovaterr)
+
+```
+
 
 ```{r subset data}
 #by transect types (e.g. R->U)
