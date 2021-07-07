@@ -19,7 +19,7 @@ decomp.samp=read.csv("decompsampleplots.csv",header=TRUE)
 names(decomp.samp)[names(decomp.samp)=="ï..Bag.ID"]<-"Bag.ID"
 #add plot and ecosystem type in for each of the samples bags
 decomp.dat=merge(decomp.samp,decomp.dat)
-soil.dat=read.csv("C:/Users/Colleen/OneDrive/Documents/School/Grad School/SpatialStats/soil data May 08 for tree plots.csv", header=T)
+soil.dat=read.csv("C:/Users/crc31/OneDrive/Documents/School/Grad School/SpatialStats/soil data May 08 for tree plots.csv", header=T)
 plotdesig=read.csv("plotdesignations.csv")
 
 #merge decomp and soil data
@@ -34,7 +34,11 @@ hydroact.dat=read.csv("DataTxtFiles/enzymeactivity.csv",header=TRUE)
 dopaact.dat=read.csv("DataTxtFiles/dopaenzymeactivity.csv", header=TRUE)
 
 ## Log transform enzyme activity data
+#First, make all negative activities 1 so that the log(1)=0. We will run all stats on log activity, so this will fix errors associated with created "Inf" or "NaN"s
 colnames(hydroact.dat)
+hydroact.dat$activity[hydroact.dat$activity<0]<-01
+dopaact.dat$activity[dopaact.dat$activity<0]<-01
+#Take the log of the variables. Note: there's lots of previously neg numbers and really low values in dopa activity. That means we're gonna get a lot of neg and really low log numbers.
 hydroact.dat$activity.lg=log(as.numeric(as.character(hydroact.dat$activity)))
 dopaact.dat$activity.lg=log(as.numeric(as.character(dopaact.dat$activity)))
 
@@ -50,6 +54,7 @@ library(ggplot2)
 library(nlme)
 library(lme4)
 library(glmm)
+library(vegan)
 ```
 
 ```{r decay rate K}
@@ -134,6 +139,8 @@ decompk.allspec.row=data.frame(nrow=199, ncol=3)
 decompk.allspec.row=rbind(decay.k.data.acesac,decay.k.data.carova,decay.k.data.querub)
 decompk.allspec.row
 
+decompk.row.soil=merge(decompk.allspec.row,soil.dat,by="Plot")
+
 #uneven number of rows, so can't use cbind.
 decompk.allspec.col=data.frame(ncol=65, ncol=5)
 decomp.k.data.acesac=decay.k.data.acesac[decay.k.data.acesac$Plot!="S2",]
@@ -146,6 +153,219 @@ decompk.allspec.col=decompk.allspec.col[,c(1:4,6:7,9)]
 colnames(decompk.allspec.col)=c("acesac","Plot","decompk.acesac","carova","decompk.carova","querub","decompk.querub")
 decompk.allspec.col=decompk.allspec.col[1:64,]
 ```
+```{r subset data}
+#by transect types (e.g. R->U)
+decomp.ripup=decompkterr[decompkterr$TerrType=="R"|decompkterr$TerrType=="RU"|decompkterr$TerrType=="T-UR"|decompkterr$TerrType=="UR"|decompkterr$TerrType=="U",]
+decomp.botup=decompkterr[decompkterr$TerrType=="B"|decompkterr$TerrType=="BU"|decompkterr$TerrType=="T-UB"|decompkterr$TerrType=="UB"|decompkterr$TerrType=="U",]
+decomp.ripbot=decompkterr[decompkterr$TerrType=="R"|decompkterr$TerrType=="RB"|decompkterr$TerrType=="T-RB"|decompkterr$TerrType=="BR"|decompkterr$TerrType=="B",]
+
+#by transect types with LUMPED transitions
+```
+```{r date collected}
+#check to make sure there are no significant differences between dates collected within harvests.
+#subsetdata
+collection1=decomp.dat[decomp.dat$Harvest=="H1",]
+collection1=droplevels(collection1)
+collection2=decomp.dat[decomp.dat$Harvest=="H2",]
+collection2=droplevels(collection2)
+collection3=decomp.dat[decomp.dat$Harvest=="H3",]
+collection3=droplevels(collection3)
+
+#Harvest 1
+harv1=aov(as.numeric(as.character(collection1$PropInitial))~collection1$Date.Collected)
+summary(harv1)
+#plot(as.numeric(as.character(collection1$PropInitial))~collection1$Date.Collected)
+##This is significant, which is not good. However, there was only one sample collected on this date. We can either kick this sample or ignore the variation as just a function of there being no variation.
+
+#Harvest 2
+harv2=aov(as.numeric(as.character(collection2$PropInitial))~collection2$Date.Collected)
+summary(harv2)
+#plot(as.numeric(as.character(collection2$PropInitial))~collection2$Date.Collected)
+
+#Harvest 3
+harv3=aov(as.numeric(as.character(collection3$PropInitial))~collection3$Date.Collected)
+summary(harv3)
+#plot(as.numeric(as.character(collection3$PropInitial))~collection3$Date.Collected)
+```
+```{r mass loss linear regressions}
+## To test H1 - Decomposition rates will be slower in ecotones than in ecosystem cores. 
+#merge the decompk.row.soil dataset with the plot design. Using the row dataset (not column), we can compare decay rates across species as well as between.
+decompk.row.desig=merge(decompk.row.soil,plotdesig)
+decompk.row.desig=decompk.row.desig[decompk.row.desig$TerrType!="S",]
+dim(decompk.row.desig)
+colnames(decompk.row.desig)
+#Take out the chunks the TerrTypes that only have one plot and, thus, aren't going to be usable.
+decompk.row.desig=decompk.row.desig[decompk.row.desig$TerrType=="R"|decompk.row.desig$TerrType=="RU"|decompk.row.desig$TerrType=="T-UR"|decompk.row.desig$TerrType=="UR"|decompk.row.desig$TerrType=="U"|decompk.row.desig$TerrType=="UB"|decompk.row.desig$TerrType=="T-UB"|decompk.row.desig$TerrType=="BU"|decompk.row.desig$TerrType=="B"|decompk.row.desig$TerrType=="BR"|decompk.row.desig$TerrType=="T-RB"|decompk.row.desig$TerrType=="RB",]
+
+## decomp by terr type with plot as a random effect
+massloss.m1=lme(as.numeric(as.character(decompk))~TerrType,random=~1|Plot, data=decompk.row.desig)
+summary(massloss.m1)
+#Nothing looks significant in the entire model. But let's look at species.
+massloss.sp=lme(as.numeric(as.character(decompk))~TerrType*Species,random=~1|Plot, data=decompk.row.desig)
+summary(massloss.sp)
+anova(massloss.sp)
+#SO many more effects. Let's break this down into smaller tests so we can actually look at it.
+
+#Subset the data into transect types (e.g., B-U, R-U and R-B)
+#by transect types (e.g. R->U)
+decompk.row.ripup=decompk.row.desig[decompk.row.desig$TerrType=="R"|decompk.row.desig$TerrType=="RU"|decompk.row.desig$TerrType=="T-UR"|decompk.row.desig$TerrType=="UR"|decompk.row.desig$TerrType=="U",]
+decompk.row.botup=decompk.row.desig[decompk.row.desig$TerrType=="B"|decompk.row.desig$TerrType=="BU"|decompk.row.desig$TerrType=="T-UB"|decompk.row.desig$TerrType=="UB"|decompk.row.desig$TerrType=="U",]
+decompk.row.ripbot=decompk.row.desig[decompk.row.desig$TerrType=="R"|decompk.row.desig$TerrType=="RB"|decompk.row.desig$TerrType=="T-RB"|decompk.row.desig$TerrType=="BR"|decompk.row.desig$TerrType=="B",]
+
+
+## decomp by terr type and plot WITHIN transect types
+#Riparian to Upland transect
+massloss.ripup=lme(as.numeric(as.character(decompk))~TerrType,random=~1|Plot, data=decompk.row.ripup)
+summary(massloss.ripup) #Nothing significant
+
+#And again with species as an intercept
+massloss.ripup.sp=lme(as.numeric(as.character(decompk))~TerrType*Species,random=~1|Plot, data=decompk.row.ripup)
+summary(massloss.ripup.sp) #Lots of significance
+anova(massloss.ripup.sp)
+
+#Order the transect logically
+decompk.row.ripup$TerrType=factor(decompk.row.ripup$TerrType, levels=c("R","RU","T-UR","UR","U"))
+#plot. Gotta think about the best way to display these data.
+ggplot(decompk.row.ripup, aes(x=TerrType,y=as.numeric(as.character(decompk)),colour=Species,group=Species))+
+  geom_point(position=position_dodge(0.2), size=4)+
+  ggtitle("RipUp TerrTypexSpecies")+
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=18),
+        axis.title=element_text(size=18))+
+  ylab("Decay K")+
+  scale_y_continuous(limits=c(-6.5,0))
+
+
+#Bottomland-upland transect
+massloss.botup=lme(as.numeric(as.character(decompk))~TerrType,random=~1|Plot, data=decompk.row.botup)
+summary(massloss.botup) #Nothing significant
+
+massloss.botup.sp=lme(as.numeric(as.character(decompk))~TerrType*Species,random=~1|Plot, data=decompk.row.botup)
+summary(massloss.botup.sp) #Lots of significance
+anova(massloss.botup.sp)
+
+#Order the transect logically
+decompk.row.botup$TerrType=factor(decompk.row.botup$TerrType, levels=c("B","BU","T-UB","UB","U"))
+#Plot.
+ggplot(decompk.row.botup, aes(x=TerrType,y=as.numeric(as.character(decompk)),colour=Species,group=Species))+
+  geom_point(position=position_dodge(0.2), size=4)+
+  ggtitle("BotUp TerrTypexSpecies")+
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=18),
+        axis.title=element_text(size=18))+
+  ylab("Decay K")+
+  scale_y_continuous(limits=c(-6.5,0))
+
+
+#Riparian-bottomland transect
+massloss.ripbot=lme(as.numeric(as.character(decompk))~TerrType,random=~1|Plot, data=decompk.row.ripbot)
+summary(massloss.ripbot) #Nothing significant
+
+massloss.ripbot.sp=lme(as.numeric(as.character(decompk))~TerrType*Species,random=~1|Plot, data=decompk.row.ripbot)
+summary(massloss.ripbot.sp) #Only a few things are significant
+anova(massloss.ripbot.sp)
+
+#Order the transect accordingly
+decompk.row.ripbot$TerrType=factor(decompk.row.ripbot$TerrType, levels=c("R", "RB","T-RB","BR","B"))
+#Plot
+ggplot(decompk.row.ripbot, aes(x=TerrType,y=as.numeric(as.character(decompk)),colour=Species,group=Species))+
+  geom_point(position=position_dodge(0.2), size=4)+
+  ggtitle("RipBot TerrTypexSpecies")+
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=18),
+        axis.title=element_text(size=18))+
+  ylab("Decay K")+
+  scale_y_continuous(limits=c(-6.5,0))
+```
+```{r linear model with Terr Type LUMPED TRANS}
+#Remove S as a Lumped Trans variable because we don't need that.
+decompk.row.desig=decompk.row.desig[decompk.row.desig$LumpedTrans!="S",]
+
+## decomp by terr type and plot WITHIN transect types
+massloss.lumped=lme(as.numeric(as.character(decompk))~LumpedTrans,random=~1|Plot, data=decompk.row.desig)
+summary(massloss.lumped)
+#And add species into the model
+massloss.lumped.sp=lme(as.numeric(as.character(decompk))~LumpedTrans*Species,random=~1|Plot, data=decompk.row.desig)
+summary(massloss.lumped.sp)
+anova(massloss.lumped.sp)
+#Way more to break apart. Let's do one transect at a time.
+
+#We can use the subsetted dataframes from earlier and just change the TerrType variable to the LumpedTrans variable.
+#Riparian to Upland transect
+massloss.ripup.lt=lme(as.numeric(as.character(decompk))~LumpedTrans,random=~1|Plot, data=decompk.row.ripup)
+summary(massloss.ripup.lt) #Some Significance
+
+#And again with species as an intercept
+massloss.ripup.splt=lme(as.numeric(as.character(decompk))~LumpedTrans*Species,random=~1|Plot, data=decompk.row.ripup)
+summary(massloss.ripup.splt) #Lots of significance
+anova(massloss.ripup.splt)
+
+#Order the transect logically
+decompk.row.ripup$LumpedTrans=factor(decompk.row.ripup$LumpedTrans, levels=c("R","UR","U"))
+#plot. Gotta think about the best way to display these data.
+ggplot(decompk.row.ripup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),colour=Species,group=Species))+
+  geom_point(position=position_dodge(0.2), size=4)+
+  ggtitle("RipUp TerrTypexSpecies")+
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=18),
+        axis.title=element_text(size=18))+
+  ylab("Decay K")+
+  scale_y_continuous(limits=c(-6.5,0))
+
+
+#Bottomland-upland transect
+massloss.botup.lt=lme(as.numeric(as.character(decompk))~LumpedTrans,random=~1|Plot, data=decompk.row.botup)
+summary(massloss.botup.lt) #Nothing significant
+
+massloss.botup.splt=lme(as.numeric(as.character(decompk))~LumpedTrans*Species,random=~1|Plot, data=decompk.row.botup)
+summary(massloss.botup.splt) #Lots of significance
+anova(massloss.botup.splt)
+
+#Order the transect logically
+decompk.row.botup$LumpedTrans=factor(decompk.row.botup$LumpedTrans, levels=c("B","UB","U"))
+#Plot.
+ggplot(decompk.row.botup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),colour=Species,group=Species))+
+  geom_point(position=position_dodge(0.2), size=4)+
+  ggtitle("BotUp LumpedTransxSpecies")+
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=18),
+        axis.title=element_text(size=18))+
+  ylab("Decay K")+
+  scale_y_continuous(limits=c(-6.5,0))
+
+
+#Riparian-bottomland transect
+massloss.ripbot.lt=lme(as.numeric(as.character(decompk))~LumpedTrans,random=~1|Plot, data=decompk.row.ripbot)
+summary(massloss.ripbot.lt) #Nothing significant
+
+massloss.ripbot.splt=lme(as.numeric(as.character(decompk))~LumpedTrans*Species,random=~1|Plot, data=decompk.row.ripbot)
+summary(massloss.ripbot.splt) #Only a few things are significant
+
+#Order the transect accordingly
+decompk.row.ripbot$LumpedTrans=factor(decompk.row.ripbot$LumpedTrans, levels=c("R", "RB","B"))
+#Plot
+ggplot(decompk.row.ripbot, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),colour=Species,group=Species))+
+  geom_point(position=position_dodge(0.2), size=4)+
+  ggtitle("RipBot LumpedTransxSpecies")+
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=18),
+        axis.title=element_text(size=18))+
+  ylab("Decay K")+
+  scale_y_continuous(limits=c(-6.5,0))
+```
+
 
 ```{r RDA decomp to soil}
 decompk.col.soil=merge(decompk.allspec.col,soil.dat,by="Plot")
@@ -173,6 +393,7 @@ decompk.rda.fulsoil.full=rda(decompk.col.soil[,5:7]~decompk.col.soil$Ptot_long+d
 
 decompk.sel=ordiR2step(decompk.rda.fulsoil.none,scope=formula(decompk.rda.fulsoil.full),Pin=0.05,R2scope=TRUE)
 decompk.sel
+#forward selection: ph_long
 
 #nug variables
 decompk.rda.fulsoil = rda(decompk.col.soil[,5:7], decompk.col.soil[,25:33])
@@ -188,196 +409,37 @@ RsquareAdj(decompk.rda.fulsoil)
 global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
 ###NOT SIGNIFICANT
 ```
-```{r decompK lme~TerrType}
-####TO DO####
-# lme of decompk compared to TerrType
-decompkterr=merge(decompk.allspec.col,plotdesig)
-colnames(decompkterr)
-rownames(decompkterr)=c(1:63)
-carovaterr=lme(decompk.carova~TerrType,random=~1|Plot, data=decompkterr)
-anova(carovaterr)
-summary(carovaterr)
-
-```
-
-
-```{r subset data}
-#by transect types (e.g. R->U)
-decomp.ripup=decomp.dat[decomp.dat$TerrType=="R"|decomp.dat$TerrType=="RU"|decomp.dat$TerrType=="T-UR"|decomp.dat$TerrType=="UR"|decomp.dat$TerrType=="U",]
-decomp.ripup=decomp.ripup[!is.na(decomp.ripup$decompK),]
-decomp.botup=decomp.dat[decomp.dat$TerrType=="B"|decomp.dat$TerrType=="BU"|decomp.dat$TerrType=="T-UB"|decomp.dat$TerrType=="UB"|decomp.dat$TerrType=="U",]
-decomp.botup=decomp.botup[!is.na(decomp.botup$decompK),]
-decomp.ripbot=decomp.dat[decomp.dat$TerrType=="R"|decomp.dat$TerrType=="RB"|decomp.dat$TerrType=="T-RB"|decomp.dat$TerrType=="BR"|decomp.dat$TerrType=="B",]
-decomp.ripbot=decomp.ripbot[!is.na(decomp.ripbot$decompK),]
-
-#by transect types with LUMPED transitions
-```
-
-```{r date collected}
-#check to make sure there are no significant differences between dates collected within harvests.
-#subsetdata
-collection1=decomp.dat[decomp.dat$Harvest=="H1",]
-collection1=droplevels(collection1)
-collection2=decomp.dat[decomp.dat$Harvest=="H2",]
-collection2=droplevels(collection2)
-collection3=decomp.dat[decomp.dat$Harvest=="H3",]
-collection3=droplevels(collection3)
-
-#Harvest 1
-harv1=aov(as.numeric(as.character(collection1$PropInitial))~collection1$Date.Collected)
-summary(harv1)
-plot(as.numeric(as.character(collection1$PropInitial))~collection1$Date.Collected)
-##This is significant, which is not good. However, there was only one sample collected on this date. We can either kick this sample or ignore the variation as just a function of there being no variation.
-
-#Harvest 2
-harv2=aov(as.numeric(as.character(collection2$PropInitial))~collection2$Date.Collected)
-summary(harv2)
-plot(as.numeric(as.character(collection2$PropInitial))~collection2$Date.Collected)
-
-#Harvest 3
-harv3=aov(as.numeric(as.character(collection3$PropInitial))~collection3$Date.Collected)
-summary(harv3)
-plot(as.numeric(as.character(collection3$PropInitial))~collection3$Date.Collected)
-```
-
-
-```{r mass loss linear regressions}
-## To test H1 - Decomposition rates will be slower in ecotones than in ecosystem cores. 
-## decomp by terr type and plot
-#massloss.m1=lme(decomp.dat$decompK~decomp.dat$TerrType+decomp.dat$Plot)
-#summary(massloss.m1)
-
-## decomp by terr type and plot WITHIN transect types
-massloss.ripup=lme(decomp.ripup$decompK~decomp.ripup$TerrType,random=~1|decomp.ripup$Plot)
-summary(massloss.ripup)
-#plot
-ggplot(decomp.ripup, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=TerrType,group=TerrType))+
-  geom_point(position=position_dodge(0.2), size=4)+
-  ggtitle("RipUp TerrType")
- 
-massloss.botup=lm(decomp.botup$decompK~decomp.botup$TerrType+decomp.botup$Plot)
-summary(massloss.botup)
-#plot
-ggplot(decomp.botup, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=TerrType,group=TerrType))+
-  geom_point(position=position_dodge(0.2), size=4)+
-  ggtitle("BotUp TerrType")
-
-massloss.ripbot=lm(decomp.ripbot$decompK~decomp.ripbot$TerrType+decomp.ripbot$Plot)
-summary(massloss.ripbot)
-ggplot(decomp.ripbot, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=TerrType,group=TerrType))+
-  geom_point(position=position_dodge(0.2), size=4)+
-  ggtitle("RipBot TerrType")
-```
-
-```{r linear model with Terr Type LUMPED TRANS}
-## decomp by terr type and plot WITHIN transect types
-massloss.ripup=lm(decomp.ripup$decompK~decomp.ripup$LumpTrans+decomp.ripup$Plot)
-summary(massloss.ripup)
-#plot
-ggplot(decomp.ripup, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=LumpTrans,group=LumpTrans))+
-  geom_point(position=position_dodge(0.2), size=4)+
-  ggtitle("RipUp Lump Trans")
- 
-massloss.botup=lm(decomp.botup$decompK~decomp.botup$LumpTrans+decomp.botup$Plot)
-summary(massloss.botup)
-#plot
-ggplot(decomp.botup, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=LumpTrans,group=LumpTrans))+
-  geom_point(position=position_dodge(0.2), size=4)+
-  ggtitle("BotUp Lump Trans")
-
-massloss.ripbot=lm(decomp.ripbot$decompK~decomp.ripbot$LumpTrans+decomp.ripbot$Plot)
-summary(massloss.ripbot)
-ggplot(decomp.ripbot, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=LumpTrans,group=LumpTrans))+
-  geom_point(position=position_dodge(0.2), size=4)+
-  ggtitle("RipBot Lump Trans")
-```
-
-```{r linear model with Terr Type AND species}
-## To test H1 - Decomposition rates will be slower in ecotones than in ecosystem cores. 
-## decomp by terr type and plot
-#massloss.m1=lm(decomp.dat$decompK~decomp.dat$TerrType+decomp.dat$Plot)
-summary(massloss.m1)
-
-## decomp by terr type and plot WITHIN transect types
-massloss.sp.ripup=lme(decompK~TerrType*Species,random=~1|Plot,data=decomp.ripup)
-anova(massloss.sp.ripup)
-summary(massloss.sp.ripup)
-#plot
-ggplot(decomp.ripup, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=TerrType,group=TerrType))+
-  geom_point(shape=decomp.ripup$Species,position=position_dodge(0.2), size=4)+
-  ggtitle("RipUp Species TerrType")
- 
-massloss.sp.botup=lme(decompK~TerrType*Species,random=~1|Plot,data=decomp.botup)
-anova(massloss.sp.botup)
-summary(massloss.sp.botup)
-#plot
-ggplot(decomp.botup, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=TerrType,group=TerrType))+
-  geom_point(shape=decomp.botup$Species,position=position_dodge(0.2), size=4)+
-  ggtitle("BotUp Species TerrType")
-
-massloss.sp.ripbot=lme(decompK~TerrType*Species,random=~1|Plot,data=decomp.ripbot)
-anova(massloss.sp.ripbot)
-summary(massloss.sp.ripbot)
-ggplot(decomp.ripbot, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=TerrType,group=TerrType))+
-  geom_point(shape=decomp.ripbot$Species,position=position_dodge(0.2), size=4)+
-  ggtitle("RipBot Species TerrType")
-```
-
-```{r linear model with Terr Type AND species LUMPED TRANS}
-## decomp by terr type and plot WITHIN transect types
-massloss.sp.ripup=lme(decompK~LumpTrans*Species,random=~1|Plot,data=decomp.ripup)
-anova(massloss.sp.ripup)
-summary(massloss.sp.ripup)
-#plot
-ggplot(decomp.ripup, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=LumpTrans,group=LumpTrans))+
-  geom_point(shape=decomp.ripup$Species,position=position_dodge(0.2), size=4)+
-  ggtitle("RipUp Species Lump Trans")
- 
-massloss.sp.botup=lme(decompK~LumpTrans*Species,random=~1|Plot,data=decomp.botup)
-anova(massloss.sp.botup)
-summary(massloss.sp.botup)
-#plot
-ggplot(decomp.botup, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=LumpTrans,group=LumpTrans))+
-  geom_point(shape=decomp.botup$Species,position=position_dodge(0.2), size=4)+
-  ggtitle("BotUp Species Lump Trans")
-
-massloss.sp.ripbot=lme(decompK~LumpTrans*Species,random=~1|Plot,data=decomp.ripbot)
-anova(massloss.sp.ripbot)
-summary(massloss.sp.ripbot)
-ggplot(decomp.ripbot, aes(x=Time.mo,y=as.numeric(as.character(PropInitial)),colour=LumpTrans,group=LumpTrans))+
-  geom_point(shape=decomp.ripbot$Species,position=position_dodge(0.2), size=4)+
-  ggtitle("RipBot Species Lump Trans")
-```
 
 ```{r enzyme mixed model}
+#There are still some "Inf" values that are left over from the activity calculations. We'll just remove those, but since we changed all the raw negatives to 1, there should be no "Na" or "NaN" values present to have to contend with.
 colnames(dopaact.dat)
-dopaact.dat=na.exclude(dopaact.dat)
 dopaact.dat=dopaact.dat[dopaact.dat$activity.lg!="Inf",]
 dim(dopaact.dat)
-
-hydroact.dat=na.exclude(hydroact.dat)
 hydroact.dat=hydroact.dat[hydroact.dat$activity.lg!="Inf",]
-dim(hydroact.dat) #we did a fuck ton of hydrolase enzymes, thus all the rows. Dont't freak out about mix-matched data from the merge
+dim(hydroact.dat) #we did a fuck ton of hydrolase enzymes, thus all the rows. Don't freak out about mix-matched data from the merge
 
-dopamod=lme(activity.lg~Enzyme+TerrType,random=~1|Plot, data=dopaact.dat)
-anova(dopamod)
-summary(dopamod)
+#Lme using log activity as repsonse variable 
+dopamod=lme(activity.lg~Enzyme*TerrType,random=~1|Plot, data=dopaact.dat)
+anova(dopamod) #No significance
 
 hydromod=lme(activity.lg~Enzyme*TerrType,random=~1|Plot, data=hydroact.dat)
-anova(hydromod)
+anova(hydromod) #Significance in enzyme type
 hydromod=lme(activity.lg~Enzyme*Ecotone,random=~1|Plot, data=hydroact.dat)
-anova(hydromod)
+anova(hydromod) #No significance
 hydromod=lme(activity.lg~Enzyme,random=~1|Plot, data=hydroact.dat)
 anova(hydromod)
-summary(hydromod)
+summary(hydromod) #Each enzyme is significantly different. I don't know that that is much of an interesting result in and of itself. If they weren't going to be different, they'd be the same damn enzyme.
 ```
 
 ```{r enzyme rda}
+#dopaact.dat=na.exclude(dopaact.dat)
 #dopa enzymes ~ soil variables
+#gotta remove some NAs in the soil variables to make this code work.
+dopaact.dat=na.exclude(dopaact.dat)
 dopa.rda.fulsoil = rda(dopaact.dat[,14], dopaact.dat[,28:52])
 anova(dopa.rda.fulsoil)
 RsquareAdj(dopa.rda.fulsoil)
-global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
+global.thresh=RsquareAdj(dopa.rda.fulsoil)$adj.r.squared
 
 dopa.rda.fulsoil.none = rda(dopaact.dat[,14]~1)
 dopa.rda.fulsoil = rda(dopaact.dat[,14], dopaact.dat[,28:52])
@@ -386,12 +448,14 @@ dopa.rda.fulsoil.full=rda(dopaact.dat[,14]~dopaact.dat$Ptot_long+dopaact.dat$Po_
 
 dopa.sel=ordiR2step(dopa.rda.fulsoil.none,scope=formula(dopa.rda.fulsoil.full),Pin=0.05,R2scope=TRUE)
 dopa.sel
+#Forward selection picks: pH_long, ps1_nug, percc_short, ptot_short, moist_short
 
 # Hydro enzymes
+hydroact.dat=na.exclude(hydroact.dat)
 hydro.rda.fulsoil = rda(hydroact.dat[,14], hydroact.dat[,28:52])
 anova(hydro.rda.fulsoil)
 RsquareAdj(hydro.rda.fulsoil)
-global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
+global.thresh=RsquareAdj(hydro.rda.fulsoil)$adj.r.squared
 
 hydro.rda.fulsoil.none = rda(hydroact.dat[,14]~1)
 hydro.rda.fulsoil = rda(hydroact.dat[,14], hydroact.dat[,28:52])
@@ -400,5 +464,29 @@ hydro.rda.fulsoil.full=rda(hydroact.dat[,14]~hydroact.dat$Ptot_long+hydroact.dat
 
 hydro.sel=ordiR2step(hydro.rda.fulsoil.none,scope=formula(hydro.rda.fulsoil.full),Pin=0.05,R2scope=TRUE)
 hydro.sel
+#Forward selection: moist_nug, pH_nug, pH_long; ps1_nug
+
+##RDA enzyme ~ TerrType and then by ecosys
+#Merge dopa and hydro datasets with plot design dataset to add the TerrType and ecosys columns.
+dopaact.dat.eco=merge(dopaact.dat,plotdesig)
+dim(dopaact.dat.eco)
+colnames(dopaact.dat.eco)
+hydroact.dat.eco=merge(hydroact.dat,plotdesig)
+dim(hydroact.dat.eco)
+colnames(hydroact.dat.eco)
+
+#Dopa RDA
+dopa.rda.fulsoil = rda(dopaact.dat[,14], dopaact.dat[,2])
+anova(dopa.rda.fulsoil)
+RsquareAdj(dopa.rda.fulsoil)
+global.thresh=RsquareAdj(dopa.rda.fulsoil)$adj.r.squared
+
+dopa.rda.fulsoil.none = rda(dopaact.dat[,14]~1)
+dopa.rda.fulsoil = rda(dopaact.dat[,14], dopaact.dat[,28:52])
+
+dopa.rda.fulsoil.full=rda(dopaact.dat[,14]~dopaact.dat$Ptot_long+dopaact.dat$Po_long+dopaact.dat$pH_long+dopaact.dat$moist_long+dopaact.dat$ps1_long+dopaact.dat$ps2_long+dopaact.dat$percc_long+dopaact.dat$cton_long+dopaact.dat$Ptot_nug+dopaact.dat$Po_nug+dopaact.dat$pH_nug+dopaact.dat$moist_nug+dopaact.dat$ps1_nug+dopaact.dat$ps2_nug+dopaact.dat$percc_nug+dopaact.dat$cton_nug+dopaact.dat$Ptot_short+dopaact.dat$Po_short+dopaact.dat$pH_short+dopaact.dat$moist_short +dopaact.dat$ps1_short+dopaact.dat$percc_short+dopaact.dat$cton_short)
+
+dopa.sel=ordiR2step(dopa.rda.fulsoil.none,scope=formula(dopa.rda.fulsoil.full),Pin=0.05,R2scope=TRUE)
+dopa.sel
 
 ```
