@@ -81,7 +81,7 @@ Q1/2,RU,Q,Trans,UR,UR
 Q3/4,R,Q,Edge,T-UR,UR
 Q5/6,R,R,Core,RU,UR
 R1,R,R,Core,R,R
-R2,S,R,Core,R,S
+R2,S,R,Core,R,R
 R4,R,R,Core,S,R
 R5,R,R,Core,R,R
 S1,R,S,Core,R,R
