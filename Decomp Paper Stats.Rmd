@@ -225,9 +225,15 @@ anova(massloss.ripup.sp)
 
 #Order the transect logically
 decompk.row.ripup$TerrType=factor(decompk.row.ripup$TerrType, levels=c("R","RU","T-UR","UR","U"))
+#calculate average
+#gd= decompk.row.ripup %>%
+  #group_by(Species, TerrType) %>%
+  #summarise(mean=mean(as.numeric(as.character(decompk))))%>%
+  #arrange(desc(Species,TerrType))
+
 #plot. Gotta think about the best way to display these data.
 ggplot(decompk.row.ripup, aes(x=TerrType,y=as.numeric(as.character(decompk)),colour=Species,group=Species))+
-  geom_point(position=position_dodge(0.2), size=4)+
+  geom_point(position=position_dodge(0.2), size=3)+
   ggtitle("RipUp TerrTypexSpecies")+
   theme_bw()+
   theme(panel.grid.major = element_blank(), 
@@ -235,7 +241,8 @@ ggplot(decompk.row.ripup, aes(x=TerrType,y=as.numeric(as.character(decompk)),col
         axis.text=element_text(size=18),
         axis.title=element_text(size=18))+
   ylab("Decay K")+
-  scale_y_continuous(limits=c(-6.5,0))
+  scale_y_continuous(limits=c(-6.5,0))+
+  stat_summary(fun="mean", geom="point",position=position_dodge(0.2), size=6)
 
 
 #Bottomland-upland transect
@@ -258,7 +265,8 @@ ggplot(decompk.row.botup, aes(x=TerrType,y=as.numeric(as.character(decompk)),col
         axis.text=element_text(size=18),
         axis.title=element_text(size=18))+
   ylab("Decay K")+
-  scale_y_continuous(limits=c(-6.5,0))
+  scale_y_continuous(limits=c(-6.5,0))+
+  stat_summary(fun="mean", geom="point",position=position_dodge(0.2), size=6)
 
 
 #Riparian-bottomland transect
@@ -281,7 +289,8 @@ ggplot(decompk.row.ripbot, aes(x=TerrType,y=as.numeric(as.character(decompk)),co
         axis.text=element_text(size=18),
         axis.title=element_text(size=18))+
   ylab("Decay K")+
-  scale_y_continuous(limits=c(-6.5,0))
+  scale_y_continuous(limits=c(-6.5,0))+
+  stat_summary(fun="mean", geom="point",position=position_dodge(0.2), size=6)
 ```
 ```{r linear model with Terr Type LUMPED TRANS}
 #Remove S as a Lumped Trans variable because we don't need that.
@@ -318,7 +327,8 @@ ggplot(decompk.row.ripup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),
         axis.text=element_text(size=18),
         axis.title=element_text(size=18))+
   ylab("Decay K")+
-  scale_y_continuous(limits=c(-6.5,0))
+  scale_y_continuous(limits=c(-6.5,0))+
+  stat_summary(fun="mean", geom="point",position=position_dodge(0.2), size=6)
 
 
 #Bottomland-upland transect
@@ -341,7 +351,8 @@ ggplot(decompk.row.botup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),
         axis.text=element_text(size=18),
         axis.title=element_text(size=18))+
   ylab("Decay K")+
-  scale_y_continuous(limits=c(-6.5,0))
+  scale_y_continuous(limits=c(-6.5,0))+
+  stat_summary(fun="mean", geom="point",position=position_dodge(0.2), size=6)
 
 
 #Riparian-bottomland transect
@@ -363,7 +374,8 @@ ggplot(decompk.row.ripbot, aes(x=LumpedTrans,y=as.numeric(as.character(decompk))
         axis.text=element_text(size=18),
         axis.title=element_text(size=18))+
   ylab("Decay K")+
-  scale_y_continuous(limits=c(-6.5,0))
+  scale_y_continuous(limits=c(-6.5,0))+
+  stat_summary(fun="mean", geom="point",position=position_dodge(0.2), size=6)
 ```
 
 
