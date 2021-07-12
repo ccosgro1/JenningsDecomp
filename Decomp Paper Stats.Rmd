@@ -225,6 +225,7 @@ anova(massloss.ripup.sp)
 
 #Order the transect logically
 decompk.row.ripup$TerrType=factor(decompk.row.ripup$TerrType, levels=c("R","RU","T-UR","UR","U"))
+decompk.row.ripup$Species=factor(decompk.row.ripup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
 #calculate average
 #gd= decompk.row.ripup %>%
   #group_by(Species, TerrType) %>%
@@ -233,7 +234,7 @@ decompk.row.ripup$TerrType=factor(decompk.row.ripup$TerrType, levels=c("R","RU",
 
 #plot. Gotta think about the best way to display these data.
 ggplot(decompk.row.ripup, aes(x=TerrType,y=as.numeric(as.character(decompk)),colour=Species,group=Species))+
-  geom_point(position=position_dodge(0.2), size=3)+
+  geom_point(position=position_dodge(0.5), size=3)+
   ggtitle("RipUp TerrTypexSpecies")+
   theme_bw()+
   theme(panel.grid.major = element_blank(), 
@@ -242,8 +243,18 @@ ggplot(decompk.row.ripup, aes(x=TerrType,y=as.numeric(as.character(decompk)),col
         axis.title=element_text(size=18))+
   ylab("Decay K")+
   scale_y_continuous(limits=c(-6.5,0))+
-  stat_summary(fun="mean", geom="point",position=position_dodge(0.2), size=6)
-
+  stat_summary(fun="mean", geom="point",position=position_dodge(0.5), size=6)
+#box plots
+ggplot(decompk.row.ripup, aes(x=TerrType,y=as.numeric(as.character(decompk)),colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  ggtitle("RipUp TerrTypexSpecies")+
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=18),
+        axis.title=element_text(size=18))+
+  ylab("Decay K")+
+  scale_y_continuous(limits=c(-6.5,0))
 
 #Bottomland-upland transect
 massloss.botup=lme(as.numeric(as.character(decompk))~TerrType,random=~1|Plot, data=decompk.row.botup)
@@ -255,9 +266,10 @@ anova(massloss.botup.sp)
 
 #Order the transect logically
 decompk.row.botup$TerrType=factor(decompk.row.botup$TerrType, levels=c("B","BU","T-UB","UB","U"))
+decompk.row.botup$Species=factor(decompk.row.botup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
 #Plot.
 ggplot(decompk.row.botup, aes(x=TerrType,y=as.numeric(as.character(decompk)),colour=Species,group=Species))+
-  geom_point(position=position_dodge(0.2), size=4)+
+  geom_point(position=position_dodge(0.5), size=4)+
   ggtitle("BotUp TerrTypexSpecies")+
   theme_bw()+
   theme(panel.grid.major = element_blank(), 
@@ -266,8 +278,18 @@ ggplot(decompk.row.botup, aes(x=TerrType,y=as.numeric(as.character(decompk)),col
         axis.title=element_text(size=18))+
   ylab("Decay K")+
   scale_y_continuous(limits=c(-6.5,0))+
-  stat_summary(fun="mean", geom="point",position=position_dodge(0.2), size=6)
-
+  stat_summary(fun="mean", geom="point",position=position_dodge(0.5), size=6)
+#Box plot
+ggplot(decompk.row.botup, aes(x=TerrType,y=as.numeric(as.character(decompk)),colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  ggtitle("BotUp TerrTypexSpecies")+
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=18),
+        axis.title=element_text(size=18))+
+  ylab("Decay K")+
+  scale_y_continuous(limits=c(-6.5,0))
 
 #Riparian-bottomland transect
 massloss.ripbot=lme(as.numeric(as.character(decompk))~TerrType,random=~1|Plot, data=decompk.row.ripbot)
@@ -279,9 +301,10 @@ anova(massloss.ripbot.sp)
 
 #Order the transect accordingly
 decompk.row.ripbot$TerrType=factor(decompk.row.ripbot$TerrType, levels=c("R", "RB","T-RB","BR","B"))
+decompk.row.ripbot$Species=factor(decompk.row.ripbot$Species, levels=c("CAROVA","ACESAC","QUERUB"))
 #Plot
 ggplot(decompk.row.ripbot, aes(x=TerrType,y=as.numeric(as.character(decompk)),colour=Species,group=Species))+
-  geom_point(position=position_dodge(0.2), size=4)+
+  geom_point(position=position_dodge(0.5), size=4)+
   ggtitle("RipBot TerrTypexSpecies")+
   theme_bw()+
   theme(panel.grid.major = element_blank(), 
@@ -290,7 +313,18 @@ ggplot(decompk.row.ripbot, aes(x=TerrType,y=as.numeric(as.character(decompk)),co
         axis.title=element_text(size=18))+
   ylab("Decay K")+
   scale_y_continuous(limits=c(-6.5,0))+
-  stat_summary(fun="mean", geom="point",position=position_dodge(0.2), size=6)
+  stat_summary(fun="mean", geom="point",position=position_dodge(0.5), size=6)
+#Box plots
+ggplot(decompk.row.ripbot, aes(x=TerrType,y=as.numeric(as.character(decompk)),colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  ggtitle("RipBot TerrTypexSpecies")+
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=18),
+        axis.title=element_text(size=18))+
+  ylab("Decay K")+
+  scale_y_continuous(limits=c(-6.5,0))
 ```
 ```{r linear model with Terr Type LUMPED TRANS}
 #Remove S as a Lumped Trans variable because we don't need that.
@@ -308,18 +342,21 @@ anova(massloss.lumped.sp)
 #We can use the subsetted dataframes from earlier and just change the TerrType variable to the LumpedTrans variable.
 #Riparian to Upland transect
 massloss.ripup.lt=lme(as.numeric(as.character(decompk))~LumpedTrans,random=~1|Plot, data=decompk.row.ripup)
+anova(massloss.ripup.lt)
 summary(massloss.ripup.lt) #Some Significance
 
 #And again with species as an intercept
 massloss.ripup.splt=lme(as.numeric(as.character(decompk))~LumpedTrans*Species,random=~1|Plot, data=decompk.row.ripup)
+anova(massloss.ripup.splt)
 summary(massloss.ripup.splt) #Lots of significance
 anova(massloss.ripup.splt)
 
 #Order the transect logically
 decompk.row.ripup$LumpedTrans=factor(decompk.row.ripup$LumpedTrans, levels=c("R","UR","U"))
+decompk.row.ripup$Species=factor(decompk.row.ripup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
 #plot. Gotta think about the best way to display these data.
 ggplot(decompk.row.ripup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),colour=Species,group=Species))+
-  geom_point(position=position_dodge(0.2), size=4)+
+  geom_point(position=position_dodge(0.5), size=4)+
   ggtitle("RipUp TerrTypexSpecies")+
   theme_bw()+
   theme(panel.grid.major = element_blank(), 
@@ -328,7 +365,21 @@ ggplot(decompk.row.ripup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),
         axis.title=element_text(size=18))+
   ylab("Decay K")+
   scale_y_continuous(limits=c(-6.5,0))+
-  stat_summary(fun="mean", geom="point",position=position_dodge(0.2), size=6)
+  stat_summary(fun="mean", geom="point",position=position_dodge(0.5), size=6)
+#Box plots
+ggplot(decompk.row.ripup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("RipUp TerrTypexSpecies")+
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        axis.title.x=element_blank(),
+        legend.position="none"
+        )+
+  ylab("Decay K")+
+  scale_y_continuous(limits=c(-6.5,0))
 
 
 #Bottomland-upland transect
@@ -338,12 +389,14 @@ summary(massloss.botup.lt) #Nothing significant
 massloss.botup.splt=lme(as.numeric(as.character(decompk))~LumpedTrans*Species,random=~1|Plot, data=decompk.row.botup)
 summary(massloss.botup.splt) #Lots of significance
 anova(massloss.botup.splt)
+#TukeyHSD(massloss.botup.splt)
 
 #Order the transect logically
 decompk.row.botup$LumpedTrans=factor(decompk.row.botup$LumpedTrans, levels=c("B","UB","U"))
+decompk.row.botup$Species=factor(decompk.row.botup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
 #Plot.
 ggplot(decompk.row.botup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),colour=Species,group=Species))+
-  geom_point(position=position_dodge(0.2), size=4)+
+  geom_point(position=position_dodge(0.5), size=4)+
   ggtitle("BotUp LumpedTransxSpecies")+
   theme_bw()+
   theme(panel.grid.major = element_blank(), 
@@ -352,7 +405,23 @@ ggplot(decompk.row.botup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),
         axis.title=element_text(size=18))+
   ylab("Decay K")+
   scale_y_continuous(limits=c(-6.5,0))+
-  stat_summary(fun="mean", geom="point",position=position_dodge(0.2), size=6)
+  stat_summary(fun="mean", geom="point",position=position_dodge(0.5), size=6)
+#Box plot
+ggplot(decompk.row.botup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("BotUp TerrTypexSpecies")+
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        #axis.title=element_text(size=18),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        legend.position = "none"
+        )+
+  ylab("Decay K")+
+  scale_y_continuous(limits=c(-6.5,0))
 
 
 #Riparian-bottomland transect
@@ -360,13 +429,15 @@ massloss.ripbot.lt=lme(as.numeric(as.character(decompk))~LumpedTrans,random=~1|P
 summary(massloss.ripbot.lt) #Nothing significant
 
 massloss.ripbot.splt=lme(as.numeric(as.character(decompk))~LumpedTrans*Species,random=~1|Plot, data=decompk.row.ripbot)
+anova(massloss.ripbot.splt)
 summary(massloss.ripbot.splt) #Only a few things are significant
 
 #Order the transect accordingly
 decompk.row.ripbot$LumpedTrans=factor(decompk.row.ripbot$LumpedTrans, levels=c("R", "RB","B"))
+decompk.row.ripbot$Species=factor(decompk.row.ripbot$Species, levels=c("CAROVA","ACESAC","QUERUB"))
 #Plot
 ggplot(decompk.row.ripbot, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),colour=Species,group=Species))+
-  geom_point(position=position_dodge(0.2), size=4)+
+  geom_point(position=position_dodge(0.5), size=4)+
   ggtitle("RipBot LumpedTransxSpecies")+
   theme_bw()+
   theme(panel.grid.major = element_blank(), 
@@ -375,7 +446,22 @@ ggplot(decompk.row.ripbot, aes(x=LumpedTrans,y=as.numeric(as.character(decompk))
         axis.title=element_text(size=18))+
   ylab("Decay K")+
   scale_y_continuous(limits=c(-6.5,0))+
-  stat_summary(fun="mean", geom="point",position=position_dodge(0.2), size=6)
+  stat_summary(fun="mean", geom="point",position=position_dodge(0.5), size=6)
+#Box plots
+ggplot(decompk.row.ripbot, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("RipBot TerrTypexSpecies")+
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        legend.text = element_text(size=15))+
+  ylab("Decay K")+
+  scale_y_continuous(limits=c(-6.5,0))
 ```
 
 
