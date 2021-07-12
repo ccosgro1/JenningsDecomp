@@ -53,7 +53,7 @@ H1/2,R,H,Core,R,R
 H3/4,R,H,Core,R,R
 H5/6,R,H,Core,R,R
 I1/2,R,I,Edge,RB,RB
-I3/4/5,RB,I,Trans,T-RB,RB
+I3/4,RB,I,Trans,T-RB,RB
 I6,B,I,Edge,BR,RB
 J1/2,R,J,Edge,RB,RB
 J3/4,RB,J,Trans,T-RB,RB
