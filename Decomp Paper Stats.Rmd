@@ -571,16 +571,20 @@ summary(hydromod) #Each enzyme is significantly different. I don't know that tha
 #phos stats
 phos.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=phos.ripup)
 anova(phos.ripup.mod)
+emmeans(phos.ripup.mod,pairwise~Species)
 
 phos.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=phos.botup)
 anova(phos.botup.mod)
+emmeans(phos.botup.mod,pairwise~Species)
 
 phos.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=phos.ripbot)
 anova(phos.ripbot.mod)
+emmeans(phos.ripbot.mod,pairwise~Species)
 
 #bglu stats
 bglu.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bglu.ripup)
 anova(bglu.ripup.mod)
+emmeans(bglu.ripup.mod,pairwise~Species)
 
 bglu.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bglu.botup)
 anova(bglu.botup.mod)
@@ -591,22 +595,26 @@ anova(bglu.ripbot.mod)
 #bcell stats
 bcell.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bcell.ripup)
 anova(bcell.ripup.mod)
+emmeans(bcell.ripup.mod,pairwise~Species)
 
 bcell.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bcell.botup)
 anova(bcell.botup.mod)
 
 bcell.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bcell.ripbot)
 anova(bcell.ripbot.mod)
+emmeans(bcell.ripbot.mod,pairwise~Species)
 
 #bxyl stats
 bxyl.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bxyl.ripup)
 anova(bxyl.ripup.mod)
+emmeans(bxyl.ripup.mod,pairwise~Species)
 
 bxyl.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bxyl.botup)
 anova(bxyl.botup.mod)
 
 bxyl.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bxyl.ripbot)
 anova(bxyl.ripbot.mod)
+emmeans(bxyl.ripbot.mod,pairwise~Species)
 
 #lap stats
 lap.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=lap.ripup)
@@ -621,12 +629,37 @@ anova(lap.ripbot.mod)
 #nag stats
 nag.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=nag.ripup)
 anova(nag.ripup.mod)
+emmeans(nag.ripup.mod,pairwise~Species)
 
 nag.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=nag.botup)
 anova(nag.botup.mod)
 
 nag.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=nag.ripbot)
 anova(nag.ripbot.mod)
+
+
+#Dopa stats
+#lap stats
+dopa.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=dopa.ripup)
+anova(dopa.ripup.mod)
+
+dopa.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=dopa.botup)
+anova(dopa.botup.mod)
+
+dopa.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=dopa.ripbot)
+anova(dopa.ripbot.mod)
+
+#h2o2 stats
+h2o2.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=h2o2.ripup)
+anova(h2o2.ripup.mod)
+emmeans(h2o2.ripup.mod, pairwise~LumpTrans)
+
+h2o2.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=h2o2.botup)
+anova(h2o2.botup.mod)
+
+h2o2.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=h2o2.ripbot)
+anova(h2o2.ripbot.mod)
+emmeans(h2o2.ripbot.mod, pairwise~LumpTrans)
 ```
 
 ```{r enzyme rda}
