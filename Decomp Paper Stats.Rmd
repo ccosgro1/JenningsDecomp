@@ -55,6 +55,7 @@ library(nlme)
 library(lme4)
 library(glmm)
 library(vegan)
+library(emmeans)
 ```
 
 ```{r decay rate K}
@@ -349,7 +350,7 @@ summary(massloss.ripup.lt) #Some Significance
 massloss.ripup.splt=lme(as.numeric(as.character(decompk))~LumpedTrans*Species,random=~1|Plot, data=decompk.row.ripup)
 anova(massloss.ripup.splt)
 summary(massloss.ripup.splt) #Lots of significance
-anova(massloss.ripup.splt)
+emmeans(massloss.ripup.splt, pairwise ~ LumpedTrans*Species)
 
 #Order the transect logically
 decompk.row.ripup$LumpedTrans=factor(decompk.row.ripup$LumpedTrans, levels=c("R","UR","U"))
@@ -389,7 +390,7 @@ summary(massloss.botup.lt) #Nothing significant
 massloss.botup.splt=lme(as.numeric(as.character(decompk))~LumpedTrans*Species,random=~1|Plot, data=decompk.row.botup)
 summary(massloss.botup.splt) #Lots of significance
 anova(massloss.botup.splt)
-#TukeyHSD(massloss.botup.splt)
+emmeans(massloss.botup.splt, pairwise ~ LumpedTrans*Species)
 
 #Order the transect logically
 decompk.row.botup$LumpedTrans=factor(decompk.row.botup$LumpedTrans, levels=c("B","UB","U"))
@@ -431,6 +432,8 @@ summary(massloss.ripbot.lt) #Nothing significant
 massloss.ripbot.splt=lme(as.numeric(as.character(decompk))~LumpedTrans*Species,random=~1|Plot, data=decompk.row.ripbot)
 anova(massloss.ripbot.splt)
 summary(massloss.ripbot.splt) #Only a few things are significant
+emmeans(massloss.ripbot.splt,pairwise ~ Species)
+emmeans(massloss.ripbot.splt, pairwise ~ LumpedTrans*Species)
 
 #Order the transect accordingly
 decompk.row.ripbot$LumpedTrans=factor(decompk.row.ripbot$LumpedTrans, levels=c("R", "RB","B"))
@@ -511,10 +514,46 @@ global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
 ```{r enzyme mixed model}
 #There are still some "Inf" values that are left over from the activity calculations. We'll just remove those, but since we changed all the raw negatives to 1, there should be no "Na" or "NaN" values present to have to contend with.
 colnames(dopaact.dat)
+dopaact.dat=na.exclude(dopaact.dat)
 dopaact.dat=dopaact.dat[dopaact.dat$activity.lg!="Inf",]
 dim(dopaact.dat)
+hydroact.dat=na.exclude(hydroact.dat)
 hydroact.dat=hydroact.dat[hydroact.dat$activity.lg!="Inf",]
 dim(hydroact.dat) #we did a fuck ton of hydrolase enzymes, thus all the rows. Don't freak out about mix-matched data from the merge
+
+#Subset all the enzymes into their own dataframes
+phos.dat=hydroact.dat[hydroact.dat$Enzyme=="phos",]
+phos.ripup=phos.dat[phos.dat$LumpTrans=="R"|phos.dat$LumpTrans=="RU"|phos.dat$LumpTrans=="U",]
+phos.botup=phos.dat[phos.dat$LumpTrans=="B"|phos.dat$LumpTrans=="UB"|phos.dat$LumpTrans=="U",]
+phos.ripbot=phos.dat[phos.dat$LumpTrans=="R"|phos.dat$LumpTrans=="RB"|phos.dat$LumpTrans=="B",]
+bglu.dat=hydroact.dat[hydroact.dat$Enzyme=="bglu",]
+bglu.ripup=bglu.dat[bglu.dat$LumpTrans=="R"|bglu.dat$LumpTrans=="RU"|bglu.dat$LumpTrans=="U",]
+bglu.botup=bglu.dat[bglu.dat$LumpTrans=="B"|bglu.dat$LumpTrans=="UB"|bglu.dat$LumpTrans=="U",]
+bglu.ripbot=bglu.dat[bglu.dat$LumpTrans=="R"|bglu.dat$LumpTrans=="RB"|bglu.dat$LumpTrans=="B",]
+bcell.dat=hydroact.dat[hydroact.dat$Enzyme=="bcell",]
+bcell.ripup=bcell.dat[bcell.dat$LumpTrans=="R"|bcell.dat$LumpTrans=="RU"|bcell.dat$LumpTrans=="U",]
+bcell.botup=bcell.dat[bcell.dat$LumpTrans=="B"|bcell.dat$LumpTrans=="UB"|bcell.dat$LumpTrans=="U",]
+bcell.ripbot=bcell.dat[bcell.dat$LumpTrans=="R"|bcell.dat$LumpTrans=="RB"|bcell.dat$LumpTrans=="B",]
+bxyl.dat=hydroact.dat[hydroact.dat$Enzyme=="bxyl",]
+bxyl.ripup=bxyl.dat[bxyl.dat$LumpTrans=="R"|bxyl.dat$LumpTrans=="RU"|bxyl.dat$LumpTrans=="U",]
+bxyl.botup=bxyl.dat[bxyl.dat$LumpTrans=="B"|bxyl.dat$LumpTrans=="UB"|bxyl.dat$LumpTrans=="U",]
+bxyl.ripbot=bxyl.dat[bxyl.dat$LumpTrans=="R"|bxyl.dat$LumpTrans=="RB"|bxyl.dat$LumpTrans=="B",]
+nag.dat=hydroact.dat[hydroact.dat$Enzyme=="nag",]
+nag.ripup=nag.dat[nag.dat$LumpTrans=="R"|nag.dat$LumpTrans=="RU"|nag.dat$LumpTrans=="U",]
+nag.botup=nag.dat[nag.dat$LumpTrans=="B"|nag.dat$LumpTrans=="UB"|nag.dat$LumpTrans=="U",]
+nag.ripbot=nag.dat[nag.dat$LumpTrans=="R"|nag.dat$LumpTrans=="RB"|nag.dat$LumpTrans=="B",]
+lap.dat=hydroact.dat[hydroact.dat$Enzyme=="lap",]
+lap.ripup=lap.dat[lap.dat$LumpTrans=="R"|lap.dat$LumpTrans=="RU"|lap.dat$LumpTrans=="U",]
+lap.botup=lap.dat[lap.dat$LumpTrans=="B"|lap.dat$LumpTrans=="UB"|lap.dat$LumpTrans=="U",]
+lap.ripbot=lap.dat[lap.dat$LumpTrans=="R"|lap.dat$LumpTrans=="RB"|lap.dat$LumpTrans=="B",]
+dopa.dat=dopaact.dat[dopaact.dat$Enzyme=="dopa",]
+dopa.ripup=dopa.dat[dopa.dat$LumpTrans=="R"|dopa.dat$LumpTrans=="RU"|dopa.dat$LumpTrans=="U",]
+dopa.botup=dopa.dat[dopa.dat$LumpTrans=="B"|dopa.dat$LumpTrans=="UB"|dopa.dat$LumpTrans=="U",]
+dopa.ripbot=dopa.dat[dopa.dat$LumpTrans=="R"|dopa.dat$LumpTrans=="RB"|dopa.dat$LumpTrans=="B",]
+h2o2.dat=dopaact.dat[dopaact.dat$Enzyme=="h2o2",]
+h2o2.ripup=h2o2.dat[h2o2.dat$LumpTrans=="R"|h2o2.dat$LumpTrans=="RU"|h2o2.dat$LumpTrans=="U",]
+h2o2.botup=h2o2.dat[h2o2.dat$LumpTrans=="B"|h2o2.dat$LumpTrans=="UB"|h2o2.dat$LumpTrans=="U",]
+h2o2.ripbot=h2o2.dat[h2o2.dat$LumpTrans=="R"|h2o2.dat$LumpTrans=="RB"|h2o2.dat$LumpTrans=="B",]
 
 #Lme using log activity as repsonse variable 
 dopamod=lme(activity.lg~Enzyme*TerrType,random=~1|Plot, data=dopaact.dat)
@@ -527,6 +566,67 @@ anova(hydromod) #No significance
 hydromod=lme(activity.lg~Enzyme,random=~1|Plot, data=hydroact.dat)
 anova(hydromod)
 summary(hydromod) #Each enzyme is significantly different. I don't know that that is much of an interesting result in and of itself. If they weren't going to be different, they'd be the same damn enzyme.
+
+
+#phos stats
+phos.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=phos.ripup)
+anova(phos.ripup.mod)
+
+phos.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=phos.botup)
+anova(phos.botup.mod)
+
+phos.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=phos.ripbot)
+anova(phos.ripbot.mod)
+
+#bglu stats
+bglu.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bglu.ripup)
+anova(bglu.ripup.mod)
+
+bglu.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bglu.botup)
+anova(bglu.botup.mod)
+
+bglu.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bglu.ripbot)
+anova(bglu.ripbot.mod)
+
+#bcell stats
+bcell.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bcell.ripup)
+anova(bcell.ripup.mod)
+
+bcell.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bcell.botup)
+anova(bcell.botup.mod)
+
+bcell.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bcell.ripbot)
+anova(bcell.ripbot.mod)
+
+#bxyl stats
+bxyl.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bxyl.ripup)
+anova(bxyl.ripup.mod)
+
+bxyl.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bxyl.botup)
+anova(bxyl.botup.mod)
+
+bxyl.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bxyl.ripbot)
+anova(bxyl.ripbot.mod)
+
+#lap stats
+lap.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=lap.ripup)
+anova(lap.ripup.mod)
+
+lap.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=lap.botup)
+anova(lap.botup.mod)
+
+lap.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=lap.ripbot)
+anova(lap.ripbot.mod)
+
+#nag stats
+nag.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=nag.ripup)
+anova(nag.ripup.mod)
+
+nag.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=nag.botup)
+anova(nag.botup.mod)
+
+nag.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=nag.ripbot)
+anova(nag.ripbot.mod)
 ```
 
 ```{r enzyme rda}
