@@ -587,6 +587,7 @@ global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
 ```
 
 ```{r enzyme mixed model}
+#####Subset and prep the datasets####
 #There are still some "Inf" values that are left over from the activity calculations. We'll just remove those, but since we changed all the raw negatives to 1, there should be no "Na" or "NaN" values present to have to contend with.
 hydroact.dat=merge(hydroact.dat, decomp.dat)
 dopaact.dat=merge(dopaact.dat, decomp.dat)
@@ -603,35 +604,116 @@ phos.dat=hydroact.dat[hydroact.dat$Enzyme=="phos",]
 phos.ripup=phos.dat[phos.dat$LumpTrans=="R"|phos.dat$LumpTrans=="RU"|phos.dat$LumpTrans=="U",]
 phos.botup=phos.dat[phos.dat$LumpTrans=="B"|phos.dat$LumpTrans=="UB"|phos.dat$LumpTrans=="U",]
 phos.ripbot=phos.dat[phos.dat$LumpTrans=="R"|phos.dat$LumpTrans=="RB"|phos.dat$LumpTrans=="B",]
+phos.ripbot.acesac=phos.ripbot[phos.ripbot$Species=="ACESAC",]
+phos.ripup.acesac=phos.ripup[phos.ripup$Species=="ACESAC",]
+phos.botup.acesac=phos.botup[phos.botup$Species=="ACESAC",]
+phos.ripbot.carova=phos.ripbot[phos.ripbot$Species=="CAROVA",]
+phos.ripup.carova=phos.ripup[phos.ripup$Species=="CAROVA",]
+phos.botup.carova=phos.botup[phos.botup$Species=="CAROVA",]
+phos.ripbot.querub=phos.ripbot[phos.ripbot$Species=="QUERUB",]
+phos.ripup.querub=phos.ripup[phos.ripup$Species=="QUERUB",]
+phos.botup.querub=phos.botup[phos.botup$Species=="QUERUB",]
+
+
 bglu.dat=hydroact.dat[hydroact.dat$Enzyme=="bglu",]
 bglu.ripup=bglu.dat[bglu.dat$LumpTrans=="R"|bglu.dat$LumpTrans=="RU"|bglu.dat$LumpTrans=="U",]
 bglu.botup=bglu.dat[bglu.dat$LumpTrans=="B"|bglu.dat$LumpTrans=="UB"|bglu.dat$LumpTrans=="U",]
 bglu.ripbot=bglu.dat[bglu.dat$LumpTrans=="R"|bglu.dat$LumpTrans=="RB"|bglu.dat$LumpTrans=="B",]
+bglu.ripbot.acesac=bglu.ripbot[bglu.ripbot$Species=="ACESAC",]
+bglu.ripup.acesac=bglu.ripup[bglu.ripup$Species=="ACESAC",]
+bglu.botup.acesac=bglu.botup[bglu.botup$Species=="ACESAC",]
+bglu.ripbot.carova=bglu.ripbot[bglu.ripbot$Species=="CAROVA",]
+bglu.ripup.carova=bglu.ripup[bglu.ripup$Species=="CAROVA",]
+bglu.botup.carova=bglu.botup[bglu.botup$Species=="CAROVA",]
+bglu.ripbot.querub=bglu.ripbot[bglu.ripbot$Species=="QUERUB",]
+bglu.ripup.querub=bglu.ripup[bglu.ripup$Species=="QUERUB",]
+bglu.botup.querub=bglu.botup[bglu.botup$Species=="QUERUB",]
+
 bcell.dat=hydroact.dat[hydroact.dat$Enzyme=="bcell",]
 bcell.ripup=bcell.dat[bcell.dat$LumpTrans=="R"|bcell.dat$LumpTrans=="RU"|bcell.dat$LumpTrans=="U",]
 bcell.botup=bcell.dat[bcell.dat$LumpTrans=="B"|bcell.dat$LumpTrans=="UB"|bcell.dat$LumpTrans=="U",]
 bcell.ripbot=bcell.dat[bcell.dat$LumpTrans=="R"|bcell.dat$LumpTrans=="RB"|bcell.dat$LumpTrans=="B",]
+bcell.ripbot.acesac=bcell.ripbot[bcell.ripbot$Species=="ACESAC",]
+bcell.ripup.acesac=bcell.ripup[bcell.ripup$Species=="ACESAC",]
+bcell.botup.acesac=bcell.botup[bcell.botup$Species=="ACESAC",]
+bcell.ripbot.carova=bcell.ripbot[bcell.ripbot$Species=="CAROVA",]
+bcell.ripup.carova=bcell.ripup[bcell.ripup$Species=="CAROVA",]
+bcell.botup.carova=bcell.botup[bcell.botup$Species=="CAROVA",]
+bcell.ripbot.querub=bcell.ripbot[bcell.ripbot$Species=="QUERUB",]
+bcell.ripup.querub=bcell.ripup[bcell.ripup$Species=="QUERUB",]
+bcell.botup.querub=bcell.botup[bcell.botup$Species=="QUERUB",]
+
 bxyl.dat=hydroact.dat[hydroact.dat$Enzyme=="bxyl",]
 bxyl.ripup=bxyl.dat[bxyl.dat$LumpTrans=="R"|bxyl.dat$LumpTrans=="RU"|bxyl.dat$LumpTrans=="U",]
 bxyl.botup=bxyl.dat[bxyl.dat$LumpTrans=="B"|bxyl.dat$LumpTrans=="UB"|bxyl.dat$LumpTrans=="U",]
 bxyl.ripbot=bxyl.dat[bxyl.dat$LumpTrans=="R"|bxyl.dat$LumpTrans=="RB"|bxyl.dat$LumpTrans=="B",]
+bxyl.ripbot.acesac=bxyl.ripbot[bxyl.ripbot$Species=="ACESAC",]
+bxyl.ripup.acesac=bxyl.ripup[bxyl.ripup$Species=="ACESAC",]
+bxyl.botup.acesac=bxyl.botup[bxyl.botup$Species=="ACESAC",]
+bxyl.ripbot.carova=bxyl.ripbot[bxyl.ripbot$Species=="CAROVA",]
+bxyl.ripup.carova=bxyl.ripup[bxyl.ripup$Species=="CAROVA",]
+bxyl.botup.carova=bxyl.botup[bxyl.botup$Species=="CAROVA",]
+bxyl.ripbot.querub=bxyl.ripbot[bxyl.ripbot$Species=="QUERUB",]
+bxyl.ripup.querub=bxyl.ripup[bxyl.ripup$Species=="QUERUB",]
+bxyl.botup.querub=bxyl.botup[bxyl.botup$Species=="QUERUB",]
+
 nag.dat=hydroact.dat[hydroact.dat$Enzyme=="nag",]
 nag.ripup=nag.dat[nag.dat$LumpTrans=="R"|nag.dat$LumpTrans=="RU"|nag.dat$LumpTrans=="U",]
 nag.botup=nag.dat[nag.dat$LumpTrans=="B"|nag.dat$LumpTrans=="UB"|nag.dat$LumpTrans=="U",]
 nag.ripbot=nag.dat[nag.dat$LumpTrans=="R"|nag.dat$LumpTrans=="RB"|nag.dat$LumpTrans=="B",]
+nag.ripbot.acesac=nag.ripbot[nag.ripbot$Species=="ACESAC",]
+nag.ripup.acesac=nag.ripup[nag.ripup$Species=="ACESAC",]
+nag.botup.acesac=nag.botup[nag.botup$Species=="ACESAC",]
+nag.ripbot.carova=nag.ripbot[nag.ripbot$Species=="CAROVA",]
+nag.ripup.carova=nag.ripup[nag.ripup$Species=="CAROVA",]
+nag.botup.carova=nag.botup[nag.botup$Species=="CAROVA",]
+nag.ripbot.querub=nag.ripbot[nag.ripbot$Species=="QUERUB",]
+nag.ripup.querub=nag.ripup[nag.ripup$Species=="QUERUB",]
+nag.botup.querub=nag.botup[nag.botup$Species=="QUERUB",]
+
 lap.dat=hydroact.dat[hydroact.dat$Enzyme=="lap",]
 lap.ripup=lap.dat[lap.dat$LumpTrans=="R"|lap.dat$LumpTrans=="RU"|lap.dat$LumpTrans=="U",]
 lap.botup=lap.dat[lap.dat$LumpTrans=="B"|lap.dat$LumpTrans=="UB"|lap.dat$LumpTrans=="U",]
 lap.ripbot=lap.dat[lap.dat$LumpTrans=="R"|lap.dat$LumpTrans=="RB"|lap.dat$LumpTrans=="B",]
+lap.ripbot.acesac=lap.ripbot[lap.ripbot$Species=="ACESAC",]
+lap.ripup.acesac=lap.ripup[lap.ripup$Species=="ACESAC",]
+lap.botup.acesac=lap.botup[lap.botup$Species=="ACESAC",]
+lap.ripbot.carova=lap.ripbot[lap.ripbot$Species=="CAROVA",]
+lap.ripup.carova=lap.ripup[lap.ripup$Species=="CAROVA",]
+lap.botup.carova=lap.botup[lap.botup$Species=="CAROVA",]
+lap.ripbot.querub=lap.ripbot[lap.ripbot$Species=="QUERUB",]
+lap.ripup.querub=lap.ripup[lap.ripup$Species=="QUERUB",]
+lap.botup.querub=lap.botup[lap.botup$Species=="QUERUB",]
+
 dopa.dat=dopaact.dat[dopaact.dat$Enzyme=="dopa",]
 dopa.ripup=dopa.dat[dopa.dat$LumpTrans=="R"|dopa.dat$LumpTrans=="RU"|dopa.dat$LumpTrans=="U",]
 dopa.botup=dopa.dat[dopa.dat$LumpTrans=="B"|dopa.dat$LumpTrans=="UB"|dopa.dat$LumpTrans=="U",]
 dopa.ripbot=dopa.dat[dopa.dat$LumpTrans=="R"|dopa.dat$LumpTrans=="RB"|dopa.dat$LumpTrans=="B",]
+dopa.ripbot.acesac=dopa.ripbot[dopa.ripbot$Species=="ACESAC",]
+dopa.ripup.acesac=dopa.ripup[dopa.ripup$Species=="ACESAC",]
+dopa.botup.acesac=dopa.botup[dopa.botup$Species=="ACESAC",]
+dopa.ripbot.carova=dopa.ripbot[dopa.ripbot$Species=="CAROVA",]
+dopa.ripup.carova=dopa.ripup[dopa.ripup$Species=="CAROVA",]
+dopa.botup.carova=dopa.botup[dopa.botup$Species=="CAROVA",]
+dopa.ripbot.querub=dopa.ripbot[dopa.ripbot$Species=="QUERUB",]
+dopa.ripup.querub=dopa.ripup[dopa.ripup$Species=="QUERUB",]
+dopa.botup.querub=dopa.botup[dopa.botup$Species=="QUERUB",]
+
 h2o2.dat=dopaact.dat[dopaact.dat$Enzyme=="h2o2",]
 h2o2.ripup=h2o2.dat[h2o2.dat$LumpTrans=="R"|h2o2.dat$LumpTrans=="RU"|h2o2.dat$LumpTrans=="U",]
 h2o2.botup=h2o2.dat[h2o2.dat$LumpTrans=="B"|h2o2.dat$LumpTrans=="UB"|h2o2.dat$LumpTrans=="U",]
 h2o2.ripbot=h2o2.dat[h2o2.dat$LumpTrans=="R"|h2o2.dat$LumpTrans=="RB"|h2o2.dat$LumpTrans=="B",]
+h2o2.ripbot.acesac=h2o2.ripbot[h2o2.ripbot$Species=="ACESAC",]
+h2o2.ripup.acesac=h2o2.ripup[h2o2.ripup$Species=="ACESAC",]
+h2o2.botup.acesac=h2o2.botup[h2o2.botup$Species=="ACESAC",]
+h2o2.ripbot.carova=h2o2.ripbot[h2o2.ripbot$Species=="CAROVA",]
+h2o2.ripup.carova=h2o2.ripup[h2o2.ripup$Species=="CAROVA",]
+h2o2.botup.carova=h2o2.botup[h2o2.botup$Species=="CAROVA",]
+h2o2.ripbot.querub=h2o2.ripbot[h2o2.ripbot$Species=="QUERUB",]
+h2o2.ripup.querub=h2o2.ripup[h2o2.ripup$Species=="QUERUB",]
+h2o2.botup.querub=h2o2.botup[h2o2.botup$Species=="QUERUB",]
 
+####Full data models. Literally useless.####
 #Lme using log activity as repsonse variable 
 dopamod=lme(activity.lg~Enzyme*TerrType,random=~1|Plot, data=dopaact.dat)
 anova(dopamod) #No significance
@@ -645,7 +727,8 @@ anova(hydromod)
 summary(hydromod) #Each enzyme is significantly different. I don't know that that is much of an interesting result in and of itself. If they weren't going to be different, they'd be the same damn enzyme.
 
 
-#phos stats
+####phos stats####
+##Riparian Upland
 phos.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=phos.ripup)
 anova(phos.ripup.mod)
 emmeans(phos.ripup.mod,pairwise~Species)
@@ -668,6 +751,19 @@ ggplot(phos.ripup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
         legend.text = element_text(size=20))+
   ylab("Enzyme activity (nmol/h/g)")
 
+phos.ripup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=phos.ripup.acesac)
+anova(phos.ripup.acesac.mod)
+emmeans(phos.ripup.acesac.mod, pairwise~Harvest)
+
+phos.ripup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=phos.ripup.carova)
+anova(phos.ripup.carova.mod)
+emmeans(phos.ripup.carova.mod, pairwise~Harvest)
+
+phos.ripup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=phos.ripup.querub)
+anova(phos.ripup.querub.mod)
+emmeans(phos.ripup.querub.mod, pairwise~Harvest)
+
+##Bottomland Upland
 phos.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=phos.botup)
 phos.botup.mod=lme(activity.lg~Species*Harvest, random=~1|Plot, data=phos.botup)
 anova(phos.botup.mod)
@@ -695,7 +791,7 @@ ggplot(phos.botup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
 #plot
 ggplot(phos.botup, aes(x=Species,y=activity.lg,colour=Species))+
   geom_boxplot(position=position_dodge(0.9), size=1)+
-  #ggtitle("Riparian-Bottomland")  +
+  #ggtitle("Bottomland-Uopland Transect")  +
   theme_bw()+
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
@@ -708,6 +804,19 @@ ggplot(phos.botup, aes(x=Species,y=activity.lg,colour=Species))+
   ylab("Enzyme activity (nmol/h/g)")+
   scale_y_continuous(limits=c(4,10))
 
+phos.botup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=phos.botup.acesac)
+anova(phos.botup.acesac.mod)
+emmeans(phos.botup.acesac.mod, pairwise~Harvest)
+
+phos.botup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=phos.botup.carova)
+anova(phos.botup.carova.mod)
+emmeans(phos.botup.carova.mod, pairwise~Harvest)
+
+phos.botup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=phos.botup.querub)
+anova(phos.botup.querub.mod)
+emmeans(phos.botup.querub.mod, pairwise~Harvest)
+
+##Riparian Bottomland
 phos.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=phos.ripbot)
 #phos.ripbot.mod=lme(activity.lg~Species*Harvest, random=~1|Plot, data=phos.ripbot)
 anova(phos.ripbot.mod)
@@ -745,76 +854,321 @@ ggplot(phos.ripbot, aes(x=Species,y=activity.lg,colour=Species))+
         legend.position = "none")+
   ylab("Enzyme activity (nmol/h/g)")
 
+phos.ripbot.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=phos.ripbot.acesac)
+anova(phos.ripbot.acesac.mod)
+emmeans(phos.ripbot.acesac.mod, pairwise~Harvest)
 
-#bglu stats
+phos.ripbot.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=phos.ripbot.carova)
+anova(phos.ripbot.carova.mod)
+emmeans(phos.ripbot.carova.mod, pairwise~Harvest)
+
+phos.ripbot.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=phos.ripbot.querub)
+anova(phos.ripbot.querub.mod)
+emmeans(phos.ripbot.querub.mod, pairwise~Harvest)
+
+
+####bglu stats####
+##Riparian Upland
 bglu.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bglu.ripup)
 anova(bglu.ripup.mod)
 emmeans(bglu.ripup.mod,pairwise~Species*Harvest)
 
+bglu.ripup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bglu.ripup.acesac)
+anova(bglu.ripup.acesac.mod)
+emmeans(bglu.ripup.acesac.mod, pairwise~Harvest)
+
+bglu.ripup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bglu.ripup.carova)
+anova(bglu.ripup.carova.mod)
+emmeans(bglu.ripup.carova.mod, pairwise~Harvest)
+
+bglu.ripup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bglu.ripup.querub)
+anova(bglu.ripup.querub.mod)
+emmeans(bglu.ripup.querub.mod, pairwise~Harvest)
+
+##Bottomland Upland
 bglu.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bglu.botup)
 anova(bglu.botup.mod)
 
+bglu.botup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bglu.botup.acesac)
+anova(bglu.botup.acesac.mod)
+emmeans(bglu.botup.acesac.mod, pairwise~Harvest)
+
+bglu.botup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bglu.botup.carova)
+anova(bglu.botup.carova.mod)
+emmeans(bglu.botup.carova.mod, pairwise~Harvest)
+
+bglu.botup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bglu.botup.querub)
+anova(bglu.botup.querub.mod)
+emmeans(bglu.botup.querub.mod, pairwise~Harvest)
+
+##Riparian Bottomland
 bglu.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bglu.ripbot)
 anova(bglu.ripbot.mod)
 
-#bcell stats
+bglu.ripbot.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bglu.ripbot.acesac)
+anova(bglu.ripbot.acesac.mod)
+emmeans(bglu.ripbot.acesac.mod, pairwise~Harvest)
+
+bglu.ripbot.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bglu.ripbot.carova)
+anova(bglu.ripbot.carova.mod)
+emmeans(bglu.ripbot.carova.mod, pairwise~Harvest)
+
+bglu.ripbot.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bglu.ripbot.querub)
+anova(bglu.ripbot.querub.mod)
+emmeans(bglu.ripbot.querub.mod, pairwise~Harvest)
+
+
+####bcell stats####
+##Riparian Upland
 bcell.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bcell.ripup)
 anova(bcell.ripup.mod)
 emmeans(bcell.ripup.mod,pairwise~Species)
 
+bcell.ripup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bcell.ripup.acesac)
+anova(bcell.ripup.acesac.mod)
+emmeans(bcell.ripup.acesac.mod, pairwise~Harvest)
+
+bcell.ripup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bcell.ripup.carova)
+anova(bcell.ripup.carova.mod)
+emmeans(bcell.ripup.carova.mod, pairwise~Harvest)
+
+bcell.ripup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bcell.ripup.querub)
+anova(bcell.ripup.querub.mod)
+emmeans(bcell.ripup.querub.mod, pairwise~Harvest)
+
+##Bottomland Upland
 bcell.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bcell.botup)
 anova(bcell.botup.mod)
 
+bcell.botup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bcell.botup.acesac)
+anova(bcell.botup.acesac.mod)
+emmeans(bcell.botup.acesac.mod, pairwise~Harvest)
+
+bcell.botup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bcell.botup.carova)
+anova(bcell.botup.carova.mod)
+emmeans(bcell.botup.carova.mod, pairwise~Harvest)
+
+bcell.botup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bcell.botup.querub)
+anova(bcell.botup.querub.mod)
+emmeans(bcell.botup.querub.mod, pairwise~Harvest)
+
+##Riparian Bottomland
 bcell.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bcell.ripbot)
 anova(bcell.ripbot.mod)
 emmeans(bcell.ripbot.mod,pairwise~Species)
 
-#bxyl stats
+bcell.ripbot.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bcell.ripbot.acesac)
+anova(bcell.ripbot.acesac.mod)
+emmeans(bcell.ripbot.acesac.mod, pairwise~Harvest)
+
+bcell.ripbot.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bcell.ripbot.carova)
+anova(bcell.ripbot.carova.mod)
+emmeans(bcell.ripbot.carova.mod, pairwise~Harvest)
+
+bcell.ripbot.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bcell.ripbot.querub)
+anova(bcell.ripbot.querub.mod)
+emmeans(bcell.ripbot.querub.mod, pairwise~Harvest)
+
+####bxyl stats####
 bxyl.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bxyl.ripup)
 anova(bxyl.ripup.mod)
 emmeans(bxyl.ripup.mod,pairwise~Species)
 
+bxyl.ripup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bxyl.ripup.acesac)
+anova(bxyl.ripup.acesac.mod)
+emmeans(bxyl.ripup.acesac.mod, pairwise~Harvest)
+
+bxyl.ripup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bxyl.ripup.carova)
+anova(bxyl.ripup.carova.mod)
+emmeans(bxyl.ripup.carova.mod, pairwise~Harvest)
+
+bxyl.ripup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bxyl.ripup.querub)
+anova(bxyl.ripup.querub.mod)
+emmeans(bxyl.ripup.querub.mod, pairwise~Harvest)
+
+##Bottomland Upland
 bxyl.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bxyl.botup)
 anova(bxyl.botup.mod)
 
+bxyl.botup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bxyl.botup.acesac)
+anova(bxyl.botup.acesac.mod)
+emmeans(bxyl.botup.acesac.mod, pairwise~Harvest)
+
+bxyl.botup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bxyl.botup.carova)
+anova(bxyl.botup.carova.mod)
+emmeans(bxyl.botup.carova.mod, pairwise~Harvest)
+
+bxyl.botup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bxyl.botup.querub)
+anova(bxyl.botup.querub.mod)
+emmeans(bxyl.botup.querub.mod, pairwise~Harvest)
+
+##Riparian Bottomland
 bxyl.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bxyl.ripbot)
 anova(bxyl.ripbot.mod)
 emmeans(bxyl.ripbot.mod,pairwise~Species)
 
-#lap stats
+bxyl.ripbot.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bxyl.ripbot.acesac)
+anova(bxyl.ripbot.acesac.mod)
+emmeans(bxyl.ripbot.acesac.mod, pairwise~Harvest)
+
+bxyl.ripbot.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bxyl.ripbot.carova)
+anova(bxyl.ripbot.carova.mod)
+emmeans(bxyl.ripbot.carova.mod, pairwise~Harvest)
+
+bxyl.ripbot.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bxyl.ripbot.querub)
+anova(bxyl.ripbot.querub.mod)
+#emmeans(bxyl.ripbot.querub.mod, pairwise~Harvest)
+
+####lap stats####
+##Riparian Upland
 lap.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=lap.ripup)
 anova(lap.ripup.mod)
 
+lap.ripup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=lap.ripup.acesac)
+anova(lap.ripup.acesac.mod)
+#emmeans(lap.ripup.acesac.mod, pairwise~Harvest)
+
+lap.ripup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=lap.ripup.carova)
+anova(lap.ripup.carova.mod)
+emmeans(lap.ripup.carova.mod, pairwise~Harvest)
+
+lap.ripup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=lap.ripup.querub)
+anova(lap.ripup.querub.mod) #Marginal
+#emmeans(lap.ripup.querub.mod, pairwise~Harvest)
+
+##Bottomland Upland
 lap.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=lap.botup)
 anova(lap.botup.mod)
 
+lap.botup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=lap.botup.acesac)
+anova(lap.botup.acesac.mod)
+#emmeans(lap.botup.acesac.mod, pairwise~Harvest)
+
+lap.botup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=lap.botup.carova)
+anova(lap.botup.carova.mod)
+emmeans(lap.botup.carova.mod, pairwise~Harvest)
+
+lap.botup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=lap.botup.querub)
+anova(lap.botup.querub.mod) 
+#emmeans(lap.botup.querub.mod, pairwise~Harvest)
+
+#Riparian Bottomland
 lap.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=lap.ripbot)
 anova(lap.ripbot.mod)
 
-#nag stats
+lap.ripbot.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=lap.ripbot.acesac)
+anova(lap.ripbot.acesac.mod)
+emmeans(lap.ripbot.acesac.mod, pairwise~Harvest)
+
+lap.ripbot.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=lap.ripbot.carova)
+anova(lap.ripbot.carova.mod)
+emmeans(lap.ripbot.carova.mod, pairwise~Harvest)
+
+lap.ripbot.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=lap.ripbot.querub)
+anova(lap.ripbot.querub.mod) #Marginal
+#emmeans(lap.ripbot.querub.mod, pairwise~Harvest)
+
+####nag stats####
+##Riparian Upland
 nag.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=nag.ripup)
 anova(nag.ripup.mod)
 emmeans(nag.ripup.mod,pairwise~Species)
 
+nag.ripup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=nag.ripup.acesac)
+anova(nag.ripup.acesac.mod)
+emmeans(nag.ripup.acesac.mod, pairwise~Harvest)
+
+nag.ripup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=nag.ripup.carova)
+anova(nag.ripup.carova.mod)
+emmeans(nag.ripup.carova.mod, pairwise~Harvest)
+
+nag.ripup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=nag.ripup.querub)
+anova(nag.ripup.querub.mod)
+emmeans(nag.ripup.querub.mod, pairwise~Harvest)
+
+#Bottomland Upland
 nag.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=nag.botup)
 anova(nag.botup.mod)
 
+nag.botup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=nag.botup.acesac)
+anova(nag.botup.acesac.mod)
+emmeans(nag.botup.acesac.mod, pairwise~Harvest)
+
+nag.botup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=nag.botup.carova)
+anova(nag.botup.carova.mod)
+emmeans(nag.botup.carova.mod, pairwise~Harvest)
+
+nag.botup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=nag.botup.querub)
+anova(nag.botup.querub.mod)
+emmeans(nag.botup.querub.mod, pairwise~Harvest)
+
+##Riparian Bottomland
 nag.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=nag.ripbot)
 anova(nag.ripbot.mod)
 
+nag.ripbot.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=nag.ripbot.acesac)
+anova(nag.ripbot.acesac.mod)
+#emmeans(nag.ripbot.acesac.mod, pairwise~Harvest)
 
-#Dopa stats
-#lap stats
+nag.ripbot.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=nag.ripbot.carova)
+anova(nag.ripbot.carova.mod)
+emmeans(nag.ripbot.carova.mod, pairwise~Harvest)
+
+nag.ripbot.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=nag.ripbot.querub)
+anova(nag.ripbot.querub.mod)
+#emmeans(nag.ripbot.querub.mod, pairwise~Harvest)
+
+####Dopa stats####
+##Riparian Upland
 dopa.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=dopa.ripup)
 anova(dopa.ripup.mod)
 
+dopa.ripup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=dopa.ripup.acesac)
+anova(dopa.ripup.acesac.mod)
+emmeans(dopa.ripup.acesac.mod, pairwise~Harvest)
+
+dopa.ripup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=dopa.ripup.carova)
+anova(dopa.ripup.carova.mod)
+#emmeans(dopa.ripup.carova.mod, pairwise~Harvest)
+
+dopa.ripup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=dopa.ripup.querub)
+anova(dopa.ripup.querub.mod)
+#emmeans(dopa.ripup.querub.mod, pairwise~Harvest)
+
+##Bottomland Upland
 dopa.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=dopa.botup)
 anova(dopa.botup.mod)
 
+dopa.botup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=dopa.botup.acesac)
+anova(dopa.botup.acesac.mod)
+#emmeans(dopa.botup.acesac.mod, pairwise~Harvest)
+
+dopa.botup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=dopa.botup.carova)
+anova(dopa.botup.carova.mod)
+#emmeans(dopa.botup.carova.mod, pairwise~Harvest)
+
+dopa.botup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=dopa.botup.querub)
+anova(dopa.botup.querub.mod)
+#emmeans(dopa.botup.querub.mod, pairwise~Harvest)
+
+##Riparian Bottomland
 dopa.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=dopa.ripbot)
 anova(dopa.ripbot.mod)
 
-#h2o2 stats
+dopa.ripbot.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=dopa.ripbot.acesac)
+anova(dopa.ripbot.acesac.mod)
+emmeans(dopa.ripbot.acesac.mod, pairwise~Harvest)
+
+dopa.ripbot.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=dopa.ripbot.carova)
+anova(dopa.ripbot.carova.mod)
+#emmeans(dopa.ripbot.carova.mod, pairwise~Harvest)
+
+dopa.ripbot.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=dopa.ripbot.querub)
+anova(dopa.ripbot.querub.mod)
+#emmeans(dopa.ripbot.querub.mod, pairwise~Harvest)
+
+####h2o2 stats####
+##Riparian Upland
 h2o2.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=h2o2.ripup)
 anova(h2o2.ripup.mod)
 emmeans(h2o2.ripup.mod, pairwise~LumpTrans)
@@ -838,6 +1192,19 @@ ggplot(h2o2.ripup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
   ylab("Enzyme activity (nmol/h/g)")+
   scale_y_continuous(limits=c(-3,5))
 
+h2o2.ripup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=h2o2.ripup.acesac)
+anova(h2o2.ripup.acesac.mod)
+emmeans(h2o2.ripup.acesac.mod, pairwise~LumpTrans)
+
+h2o2.ripup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=h2o2.ripup.carova)
+anova(h2o2.ripup.carova.mod)
+emmeans(h2o2.ripup.carova.mod, pairwise~LumpTrans)
+
+h2o2.ripup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=h2o2.ripup.querub)
+anova(h2o2.ripup.querub.mod)
+#emmeans(h2o2.ripup.querub.mod, pairwise~Harvest)
+
+
 h2o2.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=h2o2.botup)
 anova(h2o2.botup.mod)
 
@@ -859,6 +1226,18 @@ ggplot(h2o2.botup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
         legend.text = element_text(size=20))+
   ylab("Enzyme activity (nmol/h/g)")+
   scale_y_continuous(limits=c(-5,5))
+
+h2o2.botup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=h2o2.botup.acesac)
+anova(h2o2.botup.acesac.mod)
+emmeans(h2o2.botup.acesac.mod, pairwise~LumpTrans)
+
+h2o2.botup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=h2o2.botup.carova)
+anova(h2o2.botup.carova.mod)
+#emmeans(h2o2.botup.carova.mod, pairwise~LumpTrans)
+
+h2o2.botup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=h2o2.botup.querub)
+anova(h2o2.botup.querub.mod)
+#emmeans(h2o2.botup.querub.mod, pairwise~Harvest)
 
 h2o2.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=h2o2.ripbot)
 anova(h2o2.ripbot.mod)
@@ -882,6 +1261,18 @@ ggplot(h2o2.ripbot, aes(x=LumpTrans,y=activity.lg,colour=Species))+
         legend.text = element_text(size=20))+
   ylab("Enzyme activity (nmol/h/g)")+
   scale_y_continuous(limits=c(-5,5))
+
+h2o2.ripbot.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=h2o2.ripbot.acesac)
+anova(h2o2.ripbot.acesac.mod)
+emmeans(h2o2.ripbot.acesac.mod, pairwise~LumpTrans)
+
+h2o2.ripbot.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=h2o2.ripbot.carova)
+anova(h2o2.ripbot.carova.mod)
+emmeans(h2o2.ripbot.carova.mod, pairwise~LumpTrans)
+
+h2o2.ripbot.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=h2o2.ripbot.querub)
+anova(h2o2.ripbot.querub.mod)
+#emmeans(h2o2.ripbot.querub.mod, pairwise~Harvest)
 ```
 
 ```{r enzyme rda}
