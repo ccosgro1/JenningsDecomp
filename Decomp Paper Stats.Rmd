@@ -56,6 +56,7 @@ library(lme4)
 library(glmm)
 library(vegan)
 library(emmeans)
+library(dplyr)
 ```
 
 ```{r decay rate K}
@@ -415,10 +416,10 @@ ggplot(decompk.row.botup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         axis.text=element_text(size=30),
-        #axis.title=element_text(size=18),
+        axis.title=element_text(size=30),
         axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
-        axis.text.y = element_blank(),
+        #axis.title.y = element_blank(),
+        #axis.text.y = element_blank(),
         legend.position = "none"
         )+
   ylab("Decay K")+
@@ -453,16 +454,16 @@ ggplot(decompk.row.ripbot, aes(x=LumpedTrans,y=as.numeric(as.character(decompk))
 #Box plots
 ggplot(decompk.row.ripbot, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),colour=Species))+
   geom_boxplot(position=position_dodge(0.9), size=1)+
-  #ggtitle("RipBot TerrTypexSpecies")+
+  #ggtitle("Riparian-Bottomland")+
   theme_bw()+
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
-        axis.text=element_text(size=30),
+        axis.text=element_text(size=40),
         axis.title=element_text(size=30),
-        axis.text.y=element_blank(),
+        #axis.text.y=element_blank(),
         axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
-        legend.text = element_text(size=15))+
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
   ylab("Decay K")+
   scale_y_continuous(limits=c(-6.5,0))
 ```
@@ -513,6 +514,8 @@ global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
 
 ```{r enzyme mixed model}
 #There are still some "Inf" values that are left over from the activity calculations. We'll just remove those, but since we changed all the raw negatives to 1, there should be no "Na" or "NaN" values present to have to contend with.
+hydroact.dat=merge(hydroact.dat, decomp.dat)
+dopaact.dat=merge(dopaact.dat, decomp.dat)
 colnames(dopaact.dat)
 dopaact.dat=na.exclude(dopaact.dat)
 dopaact.dat=dopaact.dat[dopaact.dat$activity.lg!="Inf",]
@@ -573,18 +576,106 @@ phos.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=phos.ripu
 anova(phos.ripup.mod)
 emmeans(phos.ripup.mod,pairwise~Species)
 
+#order
+phos.ripup$LumpTrans=factor(phos.ripup$LumpTrans, levels=c("R","RU","U"))
+phos.ripup$Species=factor(phos.ripup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(phos.ripup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+
 phos.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=phos.botup)
+phos.botup.mod=lme(activity.lg~Species*Harvest, random=~1|Plot, data=phos.botup)
 anova(phos.botup.mod)
 emmeans(phos.botup.mod,pairwise~Species)
 
+#order
+phos.botup$LumpTrans=factor(phos.botup$LumpTrans, levels=c("B","UB","U"))
+phos.botup$Species=factor(phos.botup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(phos.botup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")+
+  scale_y_continuous(limits=c(0,10))
+
+#plot
+ggplot(phos.botup, aes(x=Species,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.position="none")+
+  ylab("Enzyme activity (nmol/h/g)")+
+  scale_y_continuous(limits=c(4,10))
+
 phos.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=phos.ripbot)
+#phos.ripbot.mod=lme(activity.lg~Species*Harvest, random=~1|Plot, data=phos.ripbot)
 anova(phos.ripbot.mod)
 emmeans(phos.ripbot.mod,pairwise~Species)
+
+phos.ripbot$LumpTrans=factor(phos.ripbot$LumpTrans, levels=c("R","RB","B"))
+phos.ripbot$Species=factor(phos.ripbot$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(phos.ripbot, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+
+#plot
+ggplot(phos.ripbot, aes(x=Species,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.position = "none")+
+  ylab("Enzyme activity (nmol/h/g)")
+
 
 #bglu stats
 bglu.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bglu.ripup)
 anova(bglu.ripup.mod)
-emmeans(bglu.ripup.mod,pairwise~Species)
+emmeans(bglu.ripup.mod,pairwise~Species*Harvest)
 
 bglu.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bglu.botup)
 anova(bglu.botup.mod)
@@ -654,12 +745,69 @@ h2o2.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=h2o2.ripu
 anova(h2o2.ripup.mod)
 emmeans(h2o2.ripup.mod, pairwise~LumpTrans)
 
+#order
+h2o2.ripup$LumpTrans=factor(h2o2.ripup$LumpTrans, levels=c("R","RU","U"))
+h2o2.ripup$Species=factor(h2o2.ripup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(h2o2.ripup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")+
+  scale_y_continuous(limits=c(-3,5))
+
 h2o2.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=h2o2.botup)
 anova(h2o2.botup.mod)
+
+#order
+h2o2.botup$LumpTrans=factor(h2o2.botup$LumpTrans, levels=c("B","UB","U"))
+h2o2.botup$Species=factor(h2o2.botup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(h2o2.botup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")+
+  scale_y_continuous(limits=c(-5,5))
 
 h2o2.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=h2o2.ripbot)
 anova(h2o2.ripbot.mod)
 emmeans(h2o2.ripbot.mod, pairwise~LumpTrans)
+
+#order
+h2o2.ripbot$LumpTrans=factor(h2o2.ripbot$LumpTrans, levels=c("R","RB","B"))
+h2o2.ripbot$Species=factor(h2o2.ripbot$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(h2o2.ripbot, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")+
+  scale_y_continuous(limits=c(-5,5))
 ```
 
 ```{r enzyme rda}
@@ -667,15 +815,15 @@ emmeans(h2o2.ripbot.mod, pairwise~LumpTrans)
 #dopa enzymes ~ soil variables
 #gotta remove some NAs in the soil variables to make this code work.
 dopaact.dat=na.exclude(dopaact.dat)
-dopa.rda.fulsoil = rda(dopaact.dat[,14], dopaact.dat[,28:52])
+dopa.rda.fulsoil = rda(dopaact.dat[,53], dopaact.dat[,21:45])
 anova(dopa.rda.fulsoil)
 RsquareAdj(dopa.rda.fulsoil)
 global.thresh=RsquareAdj(dopa.rda.fulsoil)$adj.r.squared
 
-dopa.rda.fulsoil.none = rda(dopaact.dat[,14]~1)
-dopa.rda.fulsoil = rda(dopaact.dat[,14], dopaact.dat[,28:52])
+dopa.rda.fulsoil.none = rda(dopaact.dat[,53]~1)
+dopa.rda.fulsoil = rda(dopaact.dat[,53], dopaact.dat[,21:45])
 
-dopa.rda.fulsoil.full=rda(dopaact.dat[,14]~dopaact.dat$Ptot_long+dopaact.dat$Po_long+dopaact.dat$pH_long+dopaact.dat$moist_long+dopaact.dat$ps1_long+dopaact.dat$ps2_long+dopaact.dat$percc_long+dopaact.dat$cton_long+dopaact.dat$Ptot_nug+dopaact.dat$Po_nug+dopaact.dat$pH_nug+dopaact.dat$moist_nug+dopaact.dat$ps1_nug+dopaact.dat$ps2_nug+dopaact.dat$percc_nug+dopaact.dat$cton_nug+dopaact.dat$Ptot_short+dopaact.dat$Po_short+dopaact.dat$pH_short+dopaact.dat$moist_short +dopaact.dat$ps1_short+dopaact.dat$percc_short+dopaact.dat$cton_short)
+dopa.rda.fulsoil.full=rda(dopaact.dat[,53]~dopaact.dat$Ptot_long+dopaact.dat$Po_long+dopaact.dat$pH_long+dopaact.dat$moist_long+dopaact.dat$ps1_long+dopaact.dat$ps2_long+dopaact.dat$percc_long+dopaact.dat$cton_long+dopaact.dat$Ptot_nug+dopaact.dat$Po_nug+dopaact.dat$pH_nug+dopaact.dat$moist_nug+dopaact.dat$ps1_nug+dopaact.dat$ps2_nug+dopaact.dat$percc_nug+dopaact.dat$cton_nug+dopaact.dat$Ptot_short+dopaact.dat$Po_short+dopaact.dat$pH_short+dopaact.dat$moist_short +dopaact.dat$ps1_short+dopaact.dat$percc_short+dopaact.dat$cton_short)
 
 dopa.sel=ordiR2step(dopa.rda.fulsoil.none,scope=formula(dopa.rda.fulsoil.full),Pin=0.05,R2scope=TRUE)
 dopa.sel
@@ -683,15 +831,15 @@ dopa.sel
 
 # Hydro enzymes
 hydroact.dat=na.exclude(hydroact.dat)
-hydro.rda.fulsoil = rda(hydroact.dat[,14], hydroact.dat[,28:52])
+hydro.rda.fulsoil = rda(hydroact.dat[,53], hydroact.dat[,21:45])
 anova(hydro.rda.fulsoil)
 RsquareAdj(hydro.rda.fulsoil)
 global.thresh=RsquareAdj(hydro.rda.fulsoil)$adj.r.squared
 
-hydro.rda.fulsoil.none = rda(hydroact.dat[,14]~1)
-hydro.rda.fulsoil = rda(hydroact.dat[,14], hydroact.dat[,28:52])
+hydro.rda.fulsoil.none = rda(hydroact.dat[,53]~1)
+hydro.rda.fulsoil = rda(hydroact.dat[,53], hydroact.dat[,21:45])
 
-hydro.rda.fulsoil.full=rda(hydroact.dat[,14]~hydroact.dat$Ptot_long+hydroact.dat$Po_long+hydroact.dat$pH_long+hydroact.dat$moist_long+hydroact.dat$ps1_long+hydroact.dat$ps2_long+hydroact.dat$percc_long+hydroact.dat$cton_long+hydroact.dat$Ptot_nug+hydroact.dat$Po_nug+hydroact.dat$pH_nug+hydroact.dat$moist_nug+hydroact.dat$ps1_nug+hydroact.dat$ps2_nug+hydroact.dat$percc_nug+hydroact.dat$cton_nug+hydroact.dat$Ptot_short+hydroact.dat$Po_short+hydroact.dat$pH_short+hydroact.dat$moist_short +hydroact.dat$ps1_short+hydroact.dat$percc_short+hydroact.dat$cton_short)
+hydro.rda.fulsoil.full=rda(hydroact.dat[,53]~hydroact.dat$Ptot_long+hydroact.dat$Po_long+hydroact.dat$pH_long+hydroact.dat$moist_long+hydroact.dat$ps1_long+hydroact.dat$ps2_long+hydroact.dat$percc_long+hydroact.dat$cton_long+hydroact.dat$Ptot_nug+hydroact.dat$Po_nug+hydroact.dat$pH_nug+hydroact.dat$moist_nug+hydroact.dat$ps1_nug+hydroact.dat$ps2_nug+hydroact.dat$percc_nug+hydroact.dat$cton_nug+hydroact.dat$Ptot_short+hydroact.dat$Po_short+hydroact.dat$pH_short+hydroact.dat$moist_short +hydroact.dat$ps1_short+hydroact.dat$percc_short+hydroact.dat$cton_short)
 
 hydro.sel=ordiR2step(hydro.rda.fulsoil.none,scope=formula(hydro.rda.fulsoil.full),Pin=0.05,R2scope=TRUE)
 hydro.sel
