@@ -810,11 +810,11 @@ emmeans(phos.botup.acesac.mod, pairwise~Harvest)
 
 phos.botup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=phos.botup.carova)
 anova(phos.botup.carova.mod)
-emmeans(phos.botup.carova.mod, pairwise~Harvest)
+#This doesn't run together, but  neither is significant alone, so it doesn't matter.
 
 phos.botup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=phos.botup.querub)
 anova(phos.botup.querub.mod)
-emmeans(phos.botup.querub.mod, pairwise~Harvest)
+#emmeans(phos.botup.querub.mod, pairwise~Harvest)
 
 ##Riparian Bottomland
 phos.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=phos.ripbot)
@@ -861,6 +861,7 @@ emmeans(phos.ripbot.acesac.mod, pairwise~Harvest)
 phos.ripbot.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=phos.ripbot.carova)
 anova(phos.ripbot.carova.mod)
 emmeans(phos.ripbot.carova.mod, pairwise~Harvest)
+##This also doesn't run with both variables in the model, but runs individually? Harvest is significant on it's own.
 
 phos.ripbot.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=phos.ripbot.querub)
 anova(phos.ripbot.querub.mod)
@@ -883,7 +884,7 @@ emmeans(bglu.ripup.carova.mod, pairwise~Harvest)
 
 bglu.ripup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bglu.ripup.querub)
 anova(bglu.ripup.querub.mod)
-emmeans(bglu.ripup.querub.mod, pairwise~Harvest)
+#emmeans(bglu.ripup.querub.mod, pairwise~Harvest)
 
 ##Bottomland Upland
 bglu.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bglu.botup)
@@ -895,7 +896,8 @@ emmeans(bglu.botup.acesac.mod, pairwise~Harvest)
 
 bglu.botup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bglu.botup.carova)
 anova(bglu.botup.carova.mod)
-emmeans(bglu.botup.carova.mod, pairwise~Harvest)
+#emmeans(bglu.botup.carova.mod, pairwise~Harvest)
+#No significance with either of these on their own.
 
 bglu.botup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bglu.botup.querub)
 anova(bglu.botup.querub.mod)
@@ -912,10 +914,11 @@ emmeans(bglu.ripbot.acesac.mod, pairwise~Harvest)
 bglu.ripbot.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bglu.ripbot.carova)
 anova(bglu.ripbot.carova.mod)
 emmeans(bglu.ripbot.carova.mod, pairwise~Harvest)
+#Only H1-H3 on their own.
 
 bglu.ripbot.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bglu.ripbot.querub)
 anova(bglu.ripbot.querub.mod)
-emmeans(bglu.ripbot.querub.mod, pairwise~Harvest)
+#emmeans(bglu.ripbot.querub.mod, pairwise~Harvest)
 
 
 ####bcell stats####
@@ -950,7 +953,7 @@ emmeans(bcell.botup.carova.mod, pairwise~Harvest)
 
 bcell.botup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bcell.botup.querub)
 anova(bcell.botup.querub.mod)
-emmeans(bcell.botup.querub.mod, pairwise~Harvest)
+#emmeans(bcell.botup.querub.mod, pairwise~Harvest)
 
 ##Riparian Bottomland
 bcell.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bcell.ripbot)
@@ -996,7 +999,7 @@ emmeans(bxyl.botup.acesac.mod, pairwise~Harvest)
 
 bxyl.botup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bxyl.botup.carova)
 anova(bxyl.botup.carova.mod)
-emmeans(bxyl.botup.carova.mod, pairwise~Harvest)
+#emmeans(bxyl.botup.carova.mod, pairwise~Harvest)
 
 bxyl.botup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bxyl.botup.querub)
 anova(bxyl.botup.querub.mod)
@@ -1046,7 +1049,7 @@ anova(lap.botup.acesac.mod)
 
 lap.botup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=lap.botup.carova)
 anova(lap.botup.carova.mod)
-emmeans(lap.botup.carova.mod, pairwise~Harvest)
+#emmeans(lap.botup.carova.mod, pairwise~Harvest)
 
 lap.botup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=lap.botup.querub)
 anova(lap.botup.querub.mod) 
@@ -1062,7 +1065,7 @@ emmeans(lap.ripbot.acesac.mod, pairwise~Harvest)
 
 lap.ripbot.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=lap.ripbot.carova)
 anova(lap.ripbot.carova.mod)
-emmeans(lap.ripbot.carova.mod, pairwise~Harvest)
+#emmeans(lap.ripbot.carova.mod, pairwise~Harvest)
 
 lap.ripbot.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=lap.ripbot.querub)
 anova(lap.ripbot.querub.mod) #Marginal
@@ -1093,10 +1096,11 @@ anova(nag.botup.mod)
 nag.botup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=nag.botup.acesac)
 anova(nag.botup.acesac.mod)
 emmeans(nag.botup.acesac.mod, pairwise~Harvest)
+emmeans(nag.botup.acesac.mod, pairwise~LumpTrans)
 
 nag.botup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=nag.botup.carova)
 anova(nag.botup.carova.mod)
-emmeans(nag.botup.carova.mod, pairwise~Harvest)
+#emmeans(nag.botup.carova.mod, pairwise~Harvest)
 
 nag.botup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=nag.botup.querub)
 anova(nag.botup.querub.mod)
@@ -1112,7 +1116,7 @@ anova(nag.ripbot.acesac.mod)
 
 nag.ripbot.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=nag.ripbot.carova)
 anova(nag.ripbot.carova.mod)
-emmeans(nag.ripbot.carova.mod, pairwise~Harvest)
+#emmeans(nag.ripbot.carova.mod, pairwise~Harvest)
 
 nag.ripbot.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=nag.ripbot.querub)
 anova(nag.ripbot.querub.mod)
