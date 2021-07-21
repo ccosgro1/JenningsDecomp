@@ -167,10 +167,19 @@ collection3=decomp.dat[decomp.dat$Harvest=="H3",]
 collection3=droplevels(collection3)
 
 #Harvest 1
-harv1=aov(as.numeric(as.character(collection1$PropInitial))~collection1$Date.Collected)
+collection1$PropInitial=as.numeric(as.character(collection1$PropInitial))
+logitTransformation=function(p){ log(p/(1-p))}
+collection1$PropInitial=logitTransformation(collection1$PropInitial)
+harv1=aov(collection1$PropInitial~collection1$Date.Collected)
 summary(harv1)
-#plot(as.numeric(as.character(collection1$PropInitial))~collection1$Date.Collected)
-##This is significant, which is not good. However, there was only one sample collected on this date. We can either kick this sample or ignore the variation as just a function of there being no variation.
+TukeyHSD(harv1)
+boxplot(collection1$PropInitial~collection1$Date.Collected)
+shapiro.test(collection1$PropInitial)
+hist(collection1$PropInitial)
+#collection1=na.omit(collection1)
+
+harv1.l=lme(PropInitial~Date.Collected, random=~1|TerrType, data=na.omit(collection1))
+anova(harv1.l)
 
 #Harvest 2
 harv2=aov(as.numeric(as.character(collection2$PropInitial))~collection2$Date.Collected)
@@ -545,9 +554,10 @@ anova(massloss.ripbot.querub.lt)
 
 ```{r RDA decomp to soil}
 decompk.col.soil=merge(decompk.allspec.col,soil.dat,by="Plot")
+decompk.col.soil=merge(decompk.col.soil,plotdesig, by="Plot")
 dim(decompk.col.soil)
 colnames(decompk.col.soil)
-decompk.col.soil=decompk.col.soil[,c(1:2,4,6,3,5,7,8:41)]
+decompk.col.soil=decompk.col.soil[,c(1:2,4,6,3,5,7,8:46)]
 #Force data as.numeric
 decompk.col.soil[,5]=as.numeric(as.character(decompk.col.soil[,5]))
 decompk.col.soil[,6]=as.numeric(as.character(decompk.col.soil[,6]))
@@ -583,7 +593,93 @@ decompk.rda.fulsoil = rda(decompk.col.soil[,5:7], decompk.col.soil[,34:41])
 anova(decompk.rda.fulsoil)
 RsquareAdj(decompk.rda.fulsoil)
 global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
+###NOT SIGNIFICANT'
+
+##Check for an ecosystem effect, like we did in the tree manuscript
+colnames(decompk.col.soil)
+decompk.rda.ecosys = rda(decompk.col.soil[,5:7], as.factor(decompk.col.soil[,42]))
+anova(decompk.rda.fulsoil)
+RsquareAdj(decompk.rda.fulsoil)
+global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
+
+###Core+edge variables
+##ALL soil variables does not have a significant effect (could be from over saturation of model from too many variables?)
+decompk.col.soil=decompk.col.soil[decompk.col.soil$EP=="Core"|decompk.col.soil$EP=="Edge",]
+#long variables
+decompk.rda.fulsoil = rda(decompk.col.soil[,5:7], decompk.col.soil[,17:24])
+anova(decompk.rda.fulsoil)
+RsquareAdj(decompk.rda.fulsoil)
+global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
+
+decompk.rda.fulsoil.none = rda(decompk.col.soil[,5:7]~1)
+decompk.rda.fulsoil = rda(decompk.col.soil[,5:7], decompk.col.soil[,17:24])
+
+decompk.rda.fulsoil.full=rda(decompk.col.soil[,5:7]~decompk.col.soil$Ptot_long+decompk.col.soil$Po_long+decompk.col.soil$pH_long+decompk.col.soil$moist_long +decompk.col.soil$ps1_long+decompk.col.soil$ps2_long+decompk.col.soil$percc_long+decompk.col.soil$cton_long)
+
+decompk.sel=ordiR2step(decompk.rda.fulsoil.none,scope=formula(decompk.rda.fulsoil.full),Pin=0.05,R2scope=TRUE)
+decompk.sel
+#forward selection: ph_long
+
+#nug variables
+decompk.rda.fulsoil = rda(decompk.col.soil[,5:7], decompk.col.soil[,25:33])
+anova(decompk.rda.fulsoil)
+RsquareAdj(decompk.rda.fulsoil)
+global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
 ###NOT SIGNIFICANT
+
+#short variables
+decompk.rda.fulsoil = rda(decompk.col.soil[,5:7], decompk.col.soil[,34:41])
+anova(decompk.rda.fulsoil)
+RsquareAdj(decompk.rda.fulsoil)
+global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
+###NOT SIGNIFICANT'
+
+##Check for ecosystem effect like we did in the tree manuscript
+colnames(decompk.col.soil)
+decompk.rda.ecosys = rda(decompk.col.soil[,5:7], as.factor(decompk.col.soil[,42]))
+anova(decompk.rda.fulsoil)
+RsquareAdj(decompk.rda.fulsoil)
+global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
+
+
+###Core variables
+##ALL soil variables does not have a significant effect (could be from over saturation of model from too many variables?)
+decompk.col.soil=decompk.col.soil[decompk.col.soil$EP=="Core",]
+#long variables
+decompk.rda.fulsoil = rda(decompk.col.soil[,5:7], decompk.col.soil[,17:24])
+anova(decompk.rda.fulsoil)
+RsquareAdj(decompk.rda.fulsoil)
+global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
+
+decompk.rda.fulsoil.none = rda(decompk.col.soil[,5:7]~1)
+decompk.rda.fulsoil = rda(decompk.col.soil[,5:7], decompk.col.soil[,17:24])
+
+decompk.rda.fulsoil.full=rda(decompk.col.soil[,5:7]~decompk.col.soil$Ptot_long+decompk.col.soil$Po_long+decompk.col.soil$pH_long+decompk.col.soil$moist_long +decompk.col.soil$ps1_long+decompk.col.soil$ps2_long+decompk.col.soil$percc_long+decompk.col.soil$cton_long)
+
+decompk.sel=ordiR2step(decompk.rda.fulsoil.none,scope=formula(decompk.rda.fulsoil.full),Pin=0.05,R2scope=TRUE)
+decompk.sel
+#forward selection: ph_long
+
+#nug variables
+decompk.rda.fulsoil = rda(decompk.col.soil[,5:7], decompk.col.soil[,25:33])
+anova(decompk.rda.fulsoil)
+RsquareAdj(decompk.rda.fulsoil)
+global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
+###NOT SIGNIFICANT
+
+#short variables
+decompk.rda.fulsoil = rda(decompk.col.soil[,5:7], decompk.col.soil[,34:41])
+anova(decompk.rda.fulsoil)
+RsquareAdj(decompk.rda.fulsoil)
+global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
+###NOT SIGNIFICANT'
+
+##Check for an ecosystem effect
+colnames(decompk.col.soil)
+decompk.rda.ecosys = rda(decompk.col.soil[,5:7], as.factor(decompk.col.soil[,42]))
+anova(decompk.rda.fulsoil)
+RsquareAdj(decompk.rda.fulsoil)
+global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
 ```
 
 ```{r enzyme mixed model}
@@ -725,7 +821,8 @@ anova(hydromod) #No significance
 hydromod=lme(activity.lg~Enzyme,random=~1|Plot, data=hydroact.dat)
 anova(hydromod)
 summary(hydromod) #Each enzyme is significantly different. I don't know that that is much of an interesting result in and of itself. If they weren't going to be different, they'd be the same damn enzyme.
-
+hydromod=lme(activity.lg~LumpTrans*Species,random=~1|Plot, data=hydroact.dat)
+anova(hydromod)
 
 ####phos stats####
 ##Riparian Upland
