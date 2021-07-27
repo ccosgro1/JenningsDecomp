@@ -386,6 +386,7 @@ summary(massloss.lumped)
 massloss.lumped.sp=lme(as.numeric(as.character(decompk))~LumpedTrans*Species,random=~1|Plot, data=decompk.row.desig)
 summary(massloss.lumped.sp)
 anova(massloss.lumped.sp)
+emmeans(massloss.lumped.sp,pairwise~LumpedTrans*Species)
 #Way more to break apart. Let's do one transect at a time.
 
 #We can use the subsetted dataframes from earlier and just change the TerrType variable to the LumpedTrans variable.
@@ -432,6 +433,7 @@ ggplot(decompk.row.ripup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),
 
 ####Bottomland-upland transect####
 massloss.botup.lt=lme(as.numeric(as.character(decompk))~LumpedTrans,random=~1|Plot, data=decompk.row.botup)
+anova(massloss.botup.lt)
 summary(massloss.botup.lt) #Nothing significant
 
 massloss.botup.splt=lme(as.numeric(as.character(decompk))~LumpedTrans*Species,random=~1|Plot, data=decompk.row.botup)
@@ -464,8 +466,8 @@ ggplot(decompk.row.botup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),
         axis.text=element_text(size=30),
         axis.title=element_text(size=30),
         axis.title.x = element_blank(),
-        #axis.title.y = element_blank(),
-        #axis.text.y = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
         legend.position = "none"
         )+
   ylab("Decay K")+
@@ -505,9 +507,9 @@ ggplot(decompk.row.ripbot, aes(x=LumpedTrans,y=as.numeric(as.character(decompk))
         panel.grid.minor = element_blank(),
         axis.text=element_text(size=40),
         axis.title=element_text(size=30),
-        #axis.text.y=element_blank(),
+        axis.text.y=element_blank(),
         axis.title.x = element_blank(),
-        #axis.title.y = element_blank(),
+        axis.title.y = element_blank(),
         legend.text = element_text(size=20))+
   ylab("Decay K")+
   scale_y_continuous(limits=c(-6.5,0))
