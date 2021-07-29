@@ -554,7 +554,152 @@ massloss.ripbot.querub.lt=lme(as.numeric(as.character(decompk))~LumpedTrans,rand
 anova(massloss.ripbot.querub.lt)
 ```
 
-```{r RDA decomp to soil}
+```{r mixed model decomp to soil}
+decompk.row.soil.eco=na.exclude(decompk.row.desig)
+decompk.row.soil.eco$decompk=as.numeric(as.character(decompk.row.soil.eco$decompk))
+#Long model
+decompk.soil.long.mod=lme(decompk~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long,random=~1|Plot, data=decompk.row.soil.eco)
+anova(decompk.soil.long.mod)
+
+#Short model
+decompk.soil.short.mod=lme(decompk~Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short,random=~1|Plot, data=decompk.row.soil.eco)
+anova(decompk.soil.short.mod)
+
+#nug model
+decompk.soil.nug.mod=lme(decompk~Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=decompk.row.soil.eco)
+anova(decompk.soil.nug.mod)
+
+#Check for an ecosystem effect
+decompk.soil.eco.mod = lm(decompk.row.soil.eco$decompk ~ decompk.row.soil.eco$TerrType)
+anova(decompk.soil.eco.mod)
+
+###CORE###
+decompk.row.soil.eco.core=decompk.row.soil.eco[decompk.row.soil.eco$EP=="Core",]
+#Long model
+decompk.soil.long.mod=lme(decompk~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long,random=~1|Plot, data=decompk.row.soil.eco)
+anova(decompk.soil.long.mod)
+
+#Short model
+decompk.soil.short.mod=lme(decompk~Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short,random=~1|Plot, data=decompk.row.soil.eco)
+anova(decompk.soil.short.mod)
+
+#nug model
+decompk.soil.nug.mod=lme(decompk~Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=decompk.row.soil.eco)
+anova(decompk.soil.nug.mod)
+
+#Check for an ecosystem effect
+decompk.soil.eco.mod = lm(decompk.row.soil.eco$decompk ~ decompk.row.soil.eco$TerrType)
+anova(decompk.soil.eco.mod)
+
+####ACESAC####
+decompk.row.soil.eco.as=decompk.row.soil.eco[decompk.row.soil.eco$Species=="ACESAC",]
+#Long model
+decompk.soil.long.acesac=lme(decompk~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long,random=~1|Plot, data=decompk.row.soil.eco.as)
+anova(decompk.soil.long.acesac)
+
+#Short model
+decompk.soil.short.acesac=lme(decompk~Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short,random=~1|Plot, data=decompk.row.soil.eco.as)
+anova(decompk.soil.short.acesac)
+
+#nug model
+decompk.soil.nug.acesac=lme(decompk~Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=decompk.row.soil.eco.as)
+anova(decompk.soil.nug.acesac)
+
+#Check for an ecosystem effect
+decompk.soil.eco.acesac = lm(decompk.row.soil.eco.as$decompk ~ decompk.row.soil.eco.as$TerrType)
+anova(decompk.soil.eco.acesac)
+
+###CORE###
+decompk.row.soil.eco.as=decompk.row.soil.eco.as[decompk.row.soil.eco.as$EP=="Core",]
+#Long model
+decompk.soil.long.acesac=lme(decompk~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long,random=~1|Plot, data=decompk.row.soil.eco.as)
+anova(decompk.soil.long.acesac)
+
+#Short model
+decompk.soil.short.acesac=lme(decompk~Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short,random=~1|Plot, data=decompk.row.soil.eco.as)
+anova(decompk.soil.short.acesac)
+
+#nug model
+decompk.soil.nug.acesac=lme(decompk~Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=decompk.row.soil.eco.as)
+anova(decompk.soil.nug.acesac)
+
+#Check for an ecosystem effect
+decompk.soil.eco.acesac = lm(decompk.row.soil.eco.as$decompk ~ decompk.row.soil.eco.as$TerrType)
+anova(decompk.soil.eco.acesac)
+
+####QUERUB####
+decompk.row.soil.eco.qr=decompk.row.soil.eco[decompk.row.soil.eco$Species=="QUERUB",]
+#Long model
+decompk.soil.long.querub=lme(decompk~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long,random=~1|Plot, data=decompk.row.soil.eco.qr)
+anova(decompk.soil.long.querub)
+
+#Short model
+decompk.soil.short.querub=lme(decompk~Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short,random=~1|Plot, data=decompk.row.soil.eco.qr)
+anova(decompk.soil.short.querub)
+
+#nug model
+decompk.soil.nug.querub=lme(decompk~Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=decompk.row.soil.eco.qr)
+anova(decompk.soil.nug.querub)
+
+#Check for an ecosystem effect
+decompk.soil.eco.querub = lm(decompk.row.soil.eco.qr$decompk ~ decompk.row.soil.eco.qr$TerrType)
+anova(decompk.soil.eco.querub)
+
+###CORE###
+decompk.row.soil.eco.qr=decompk.row.soil.eco.qr[decompk.row.soil.eco.qr$EP=="Core",]
+#Long model
+decompk.soil.long.querub=lme(decompk~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long,random=~1|Plot, data=decompk.row.soil.eco.qr)
+anova(decompk.soil.long.querub)
+
+#Short model
+decompk.soil.short.querub=lme(decompk~Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short,random=~1|Plot, data=decompk.row.soil.eco.qr)
+anova(decompk.soil.short.querub)
+
+#nug model
+decompk.soil.nug.querub=lme(decompk~Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=decompk.row.soil.eco.qr)
+anova(decompk.soil.nug.querub)
+
+#Check for an ecosystem effect
+decompk.soil.eco.querub = lm(decompk.row.soil.eco.qr$decompk ~ decompk.row.soil.eco.qr$TerrType)
+anova(decompk.soil.eco.querub)
+####CAROVA####
+decompk.row.soil.eco.co=decompk.row.soil.eco[decompk.row.soil.eco$Species=="CAROVA",]
+#Long model
+decompk.soil.long.carova=lme(decompk~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long,random=~1|Plot, data=decompk.row.soil.eco.co)
+anova(decompk.soil.long.carova)
+
+#Short model
+decompk.soil.short.carova=lme(decompk~Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short,random=~1|Plot, data=decompk.row.soil.eco.co)
+anova(decompk.soil.short.carova)
+
+#nug model
+decompk.soil.nug.carova=lme(decompk~Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=decompk.row.soil.eco.co)
+anova(decompk.soil.nug.carova)
+
+#Check for an ecosystem effect
+decompk.soil.eco.carova = lm(decompk.row.soil.eco.co$decompk ~ decompk.row.soil.eco.co$TerrType)
+anova(decompk.soil.eco.carova)
+
+###CORE###
+decompk.row.soil.eco.co=decompk.row.soil.eco.co[decompk.row.soil.eco.co$EP=="Core",]
+#Long model
+decompk.soil.long.carova=lme(decompk~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long,random=~1|Plot, data=decompk.row.soil.eco.co)
+anova(decompk.soil.long.carova)
+
+#Short model
+decompk.soil.short.carova=lme(decompk~Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short,random=~1|Plot, data=decompk.row.soil.eco.co)
+anova(decompk.soil.short.carova)
+
+#nug model
+decompk.soil.nug.carova=lme(decompk~Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=decompk.row.soil.eco.co)
+anova(decompk.soil.nug.carova)
+
+#Check for an ecosystem effect
+decompk.soil.eco.carova = lm(decompk.row.soil.eco.co$decompk ~ decompk.row.soil.eco.co$TerrType)
+anova(decompk.soil.eco.carova)
+```
+
+```#{r RDA decomp to soil}
 decompk.col.soil=merge(decompk.allspec.col,soil.dat,by="Plot")
 decompk.col.soil=merge(decompk.col.soil,plotdesig, by="Plot")
 dim(decompk.col.soil)
@@ -684,7 +829,7 @@ RsquareAdj(decompk.rda.fulsoil)
 global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
 ```
 
-```{r enzyme mixed model}
+```{r enzyme harvest position mixed model}
 #####Subset and prep the datasets####
 #There are still some "Inf" values that are left over from the activity calculations. We'll just remove those, but since we changed all the raw negatives to 1, there should be no "Na" or "NaN" values present to have to contend with.
 hydroact.dat=merge(hydroact.dat, decomp.dat)
@@ -1378,24 +1523,63 @@ anova(h2o2.ripbot.querub.mod)
 #emmeans(h2o2.ripbot.querub.mod, pairwise~Harvest)
 ```
 
-```{r enzyme rda}
-#dopaact.dat=na.exclude(dopaact.dat)
+```{r enzyme soil rda}
+#Merge dopa and hydro datasets with plot design dataset to add the TerrType and ecosys columns.
+dopaact.dat.eco=merge(dopaact.dat,plotdesig)
+dim(dopaact.dat.eco)
+colnames(dopaact.dat.eco)
+hydroact.dat.eco=merge(hydroact.dat,plotdesig)
+dim(hydroact.dat.eco)
+colnames(hydroact.dat.eco)
+
 #dopa enzymes ~ soil variables
 #gotta remove some NAs in the soil variables to make this code work.
-dopaact.dat=na.exclude(dopaact.dat)
-dopa.rda.fulsoil = rda(dopaact.dat[,53], dopaact.dat[,21:45])
+dopaact.dat.eco=na.exclude(dopaact.dat.eco)
+dopa.rda.fulsoil = rda(dopaact.dat.eco[,53], dopaact.dat.eco[,21:45])
 anova(dopa.rda.fulsoil)
 RsquareAdj(dopa.rda.fulsoil)
 global.thresh=RsquareAdj(dopa.rda.fulsoil)$adj.r.squared
 
-dopa.rda.fulsoil.none = rda(dopaact.dat[,53]~1)
-dopa.rda.fulsoil = rda(dopaact.dat[,53], dopaact.dat[,21:45])
+dopa.rda.fulsoil.none = rda(dopaact.dat.eco[,53]~1)
+dopa.rda.fulsoil = rda(dopaact.dat.eco[,53], dopaact.dat.eco[,21:45])
 
-dopa.rda.fulsoil.full=rda(dopaact.dat[,53]~dopaact.dat$Ptot_long+dopaact.dat$Po_long+dopaact.dat$pH_long+dopaact.dat$moist_long+dopaact.dat$ps1_long+dopaact.dat$ps2_long+dopaact.dat$percc_long+dopaact.dat$cton_long+dopaact.dat$Ptot_nug+dopaact.dat$Po_nug+dopaact.dat$pH_nug+dopaact.dat$moist_nug+dopaact.dat$ps1_nug+dopaact.dat$ps2_nug+dopaact.dat$percc_nug+dopaact.dat$cton_nug+dopaact.dat$Ptot_short+dopaact.dat$Po_short+dopaact.dat$pH_short+dopaact.dat$moist_short +dopaact.dat$ps1_short+dopaact.dat$percc_short+dopaact.dat$cton_short)
+dopa.rda.fulsoil.full=rda(dopaact.dat.eco[,53]~dopaact.dat.eco$Ptot_long+dopaact.dat.eco$Po_long+dopaact.dat.eco$pH_long+dopaact.dat.eco$moist_long+dopaact.dat.eco$ps1_long+dopaact.dat.eco$ps2_long+dopaact.dat.eco$percc_long+dopaact.dat.eco$cton_long+dopaact.dat.eco$Ptot_nug+dopaact.dat.eco$Po_nug+dopaact.dat.eco$pH_nug+dopaact.dat.eco$moist_nug+dopaact.dat.eco$ps1_nug+dopaact.dat.eco$ps2_nug+dopaact.dat.eco$percc_nug+dopaact.dat.eco$cton_nug+dopaact.dat.eco$Ptot_short+dopaact.dat.eco$Po_short+dopaact.dat.eco$pH_short+dopaact.dat.eco$moist_short +dopaact.dat.eco$ps1_short+dopaact.dat.eco$percc_short+dopaact.dat.eco$cton_short)
 
 dopa.sel=ordiR2step(dopa.rda.fulsoil.none,scope=formula(dopa.rda.fulsoil.full),Pin=0.05,R2scope=TRUE)
 dopa.sel
 #Forward selection picks: pH_long, ps1_nug, percc_short, ptot_short, moist_short
+
+##Check for an ecosystem effect
+#dopa enzymes ~ Terr Type
+dopa.rda.fulsoil = lm(dopaact.dat.eco[,53]~ dopaact.dat.eco[,2])
+anova(dopa.rda.fulsoil)
+RsquareAdj(dopa.rda.fulsoil)
+global.thresh=RsquareAdj(dopa.rda.fulsoil)$adj.r.squared
+
+##Core+Edge
+dopaact.dat.eco==dopaact.dat.eco[dopaact.dat.eco$EP=="Core"|dopaact.dat.eco$EP=="Edge",]
+#dopa enzymes ~ soil variables
+#gotta remove some NAs in the soil variables to make this code work.
+dopaact.dat.eco=na.exclude(dopaact.dat.eco)
+dopa.rda.fulsoil = rda(dopaact.dat.eco[,53], dopaact.dat.eco[,21:45])
+anova(dopa.rda.fulsoil)
+RsquareAdj(dopa.rda.fulsoil)
+global.thresh=RsquareAdj(dopa.rda.fulsoil)$adj.r.squared
+
+dopa.rda.fulsoil.none = rda(dopaact.dat.eco[,53]~1)
+dopa.rda.fulsoil = rda(dopaact.dat.eco[,53], dopaact.dat.eco[,21:45])
+
+dopa.rda.fulsoil.full=rda(dopaact.dat.eco[,53]~dopaact.dat.eco$Ptot_long+dopaact.dat.eco$Po_long+dopaact.dat.eco$pH_long+dopaact.dat.eco$moist_long+dopaact.dat.eco$ps1_long+dopaact.dat.eco$ps2_long+dopaact.dat.eco$percc_long+dopaact.dat.eco$cton_long+dopaact.dat.eco$Ptot_nug+dopaact.dat.eco$Po_nug+dopaact.dat.eco$pH_nug+dopaact.dat.eco$moist_nug+dopaact.dat.eco$ps1_nug+dopaact.dat.eco$ps2_nug+dopaact.dat.eco$percc_nug+dopaact.dat.eco$cton_nug+dopaact.dat.eco$Ptot_short+dopaact.dat.eco$Po_short+dopaact.dat.eco$pH_short+dopaact.dat.eco$moist_short +dopaact.dat.eco$ps1_short+dopaact.dat.eco$percc_short+dopaact.dat.eco$cton_short)
+
+dopa.sel=ordiR2step(dopa.rda.fulsoil.none,scope=formula(dopa.rda.fulsoil.full),Pin=0.05,R2scope=TRUE)
+dopa.sel
+#Forward selection picks: pH_long, ps1_nug, percc_short, ptot_short, moist_short
+
+##Check for an ecosystem effect
+dopa.rda.fulsoil = rda(dopaact.dat.eco[,53], dopaact.dat.eco[,2])
+anova(dopa.rda.fulsoil)
+RsquareAdj(dopa.rda.fulsoil)
+global.thresh=RsquareAdj(dopa.rda.fulsoil)$adj.r.squared
 
 # Hydro enzymes
 hydroact.dat=na.exclude(hydroact.dat)
@@ -1413,27 +1597,153 @@ hydro.sel=ordiR2step(hydro.rda.fulsoil.none,scope=formula(hydro.rda.fulsoil.full
 hydro.sel
 #Forward selection: moist_nug, pH_nug, pH_long; ps1_nug
 
-##RDA enzyme ~ TerrType and then by ecosys
-#Merge dopa and hydro datasets with plot design dataset to add the TerrType and ecosys columns.
-dopaact.dat.eco=merge(dopaact.dat,plotdesig)
-dim(dopaact.dat.eco)
-colnames(dopaact.dat.eco)
-hydroact.dat.eco=merge(hydroact.dat,plotdesig)
-dim(hydroact.dat.eco)
-colnames(hydroact.dat.eco)
+```
 
-#Dopa RDA
-dopa.rda.fulsoil = rda(dopaact.dat[,14], dopaact.dat[,2])
-anova(dopa.rda.fulsoil)
-RsquareAdj(dopa.rda.fulsoil)
-global.thresh=RsquareAdj(dopa.rda.fulsoil)$adj.r.squared
 
-dopa.rda.fulsoil.none = rda(dopaact.dat[,14]~1)
-dopa.rda.fulsoil = rda(dopaact.dat[,14], dopaact.dat[,28:52])
+```{r enzyme soil mixed model}
+####phos####
+dim(phos.dat)
+phos.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=phos.dat)
+anova(phos.soil.mod)
 
-dopa.rda.fulsoil.full=rda(dopaact.dat[,14]~dopaact.dat$Ptot_long+dopaact.dat$Po_long+dopaact.dat$pH_long+dopaact.dat$moist_long+dopaact.dat$ps1_long+dopaact.dat$ps2_long+dopaact.dat$percc_long+dopaact.dat$cton_long+dopaact.dat$Ptot_nug+dopaact.dat$Po_nug+dopaact.dat$pH_nug+dopaact.dat$moist_nug+dopaact.dat$ps1_nug+dopaact.dat$ps2_nug+dopaact.dat$percc_nug+dopaact.dat$cton_nug+dopaact.dat$Ptot_short+dopaact.dat$Po_short+dopaact.dat$pH_short+dopaact.dat$moist_short +dopaact.dat$ps1_short+dopaact.dat$percc_short+dopaact.dat$cton_short)
+#Check for an ecosystem effect
+phos.soil.eco.mod = lm(phos.dat$activity.lg ~ phos.dat$TerrType)
+anova(phos.soil.eco.mod)
 
-dopa.sel=ordiR2step(dopa.rda.fulsoil.none,scope=formula(dopa.rda.fulsoil.full),Pin=0.05,R2scope=TRUE)
-dopa.sel
+###CORE###
+phos.dat.core=phos.dat[phos.dat$Ecotone!="Ecotone",]
+phos.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=phos.dat.core)
+anova(phos.soil.mod)
 
+#Check for an ecosystem effect
+phos.soil.eco.mod = lm(phos.dat.core$activity.lg ~ phos.dat.core$TerrType)
+anova(phos.soil.eco.mod)
+
+####bglu####
+dim(bglu.dat)
+bglu.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=bglu.dat)
+anova(bglu.soil.mod)
+
+#Check for an ecosystem effect
+bglu.soil.eco.mod = lm(bglu.dat$activity.lg ~ bglu.dat$TerrType)
+anova(bglu.soil.eco.mod)
+
+###CORE###
+bglu.dat.core=bglu.dat[bglu.dat$Ecotone!="Ecotone",]
+bglu.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=bglu.dat.core)
+anova(bglu.soil.mod)
+
+#Check for an ecosystem effect
+bglu.soil.eco.mod = lm(bglu.dat.core$activity.lg ~ bglu.dat.core$TerrType)
+anova(bglu.soil.eco.mod)
+
+####
+
+####bcell####
+dim(bcell.dat)
+bcell.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=bcell.dat)
+anova(bcell.soil.mod)
+
+#Check for an ecosystem effect
+bcell.soil.eco.mod = lm(bcell.dat$activity.lg ~ bcell.dat$TerrType)
+anova(bcell.soil.eco.mod)
+
+###CORE###
+bcell.dat.core=bcell.dat[bcell.dat$Ecotone!="Ecotone",]
+bcell.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=bcell.dat.core)
+anova(bcell.soil.mod)
+
+#Check for an ecosystem effect
+bcell.soil.eco.mod = lm(bcell.dat.core$activity.lg ~ bcell.dat.core$TerrType)
+anova(bcell.soil.eco.mod)
+
+####bxyl####
+dim(bxyl.dat)
+bxyl.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=bxyl.dat)
+anova(bxyl.soil.mod)
+
+#Check for an ecosystem effect
+bxyl.soil.eco.mod = lm(bxyl.dat$activity.lg ~ bxyl.dat$TerrType)
+anova(bxyl.soil.eco.mod)
+
+###CORE###
+bxyl.dat.core=bxyl.dat[bxyl.dat$Ecotone!="Ecotone",]
+bxyl.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=bxyl.dat.core)
+anova(bxyl.soil.mod)
+
+#Check for an ecosystem effect
+bxyl.soil.eco.mod = lm(bxyl.dat.core$activity.lg ~ bxyl.dat.core$TerrType)
+anova(bxyl.soil.eco.mod)
+
+####lap####
+dim(lap.dat)
+lap.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=lap.dat)
+anova(lap.soil.mod)
+
+#Check for an ecosystem effect
+lap.soil.eco.mod = lm(lap.dat$activity.lg ~ lap.dat$TerrType)
+anova(lap.soil.eco.mod)
+
+###CORE###
+lap.dat.core=lap.dat[lap.dat$Ecotone!="Ecotone",]
+lap.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=lap.dat.core)
+anova(lap.soil.mod)
+
+#Check for an ecosystem effect
+lap.soil.eco.mod = lm(lap.dat.core$activity.lg ~ lap.dat.core$TerrType)
+anova(lap.soil.eco.mod)
+
+####nag####
+dim(nag.dat)
+nag.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=nag.dat)
+anova(nag.soil.mod)
+
+#Check for an ecosystem effect
+nag.soil.eco.mod = lm(nag.dat$activity.lg ~ nag.dat$TerrType)
+anova(nag.soil.eco.mod)
+
+###CORE###
+nag.dat.core=nag.dat[nag.dat$Ecotone!="Ecotone",]
+nag.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=nag.dat.core)
+anova(nag.soil.mod)
+
+#Check for an ecosystem effect
+nag.soil.eco.mod = lm(nag.dat.core$activity.lg ~ nag.dat.core$TerrType)
+anova(nag.soil.eco.mod)
+
+####dopa####
+dim(dopa.dat)
+dopa.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=dopa.dat)
+anova(dopa.soil.mod)
+
+#Check for an ecosystem effect
+dopa.soil.eco.mod = lm(dopa.dat$activity.lg ~ dopa.dat$TerrType)
+anova(dopa.soil.eco.mod)
+
+###CORE###
+dopa.dat.core=dopa.dat[dopa.dat$Ecotone!="Ecotone",]
+dopa.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=dopa.dat.core)
+anova(dopa.soil.mod)
+
+#Check for an ecosystem effect
+dopa.soil.eco.mod = lm(dopa.dat.core$activity.lg ~ dopa.dat.core$TerrType)
+anova(dopa.soil.eco.mod)
+
+####h2o2####
+dim(h2o2.dat)
+h2o2.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=h2o2.dat)
+anova(h2o2.soil.mod)
+
+#Check for an ecosystem effect
+h2o2.soil.eco.mod = lm(h2o2.dat$activity.lg ~ h2o2.dat$TerrType)
+anova(h2o2.soil.eco.mod)
+
+###CORE###
+h2o2.dat.core=h2o2.dat[h2o2.dat$Ecotone!="Ecotone",]
+h2o2.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=h2o2.dat.core)
+anova(h2o2.soil.mod)
+
+#Check for an ecosystem effect
+h2o2.soil.eco.mod = lm(h2o2.dat.core$activity.lg ~ h2o2.dat.core$TerrType)
+anova(h2o2.soil.eco.mod)
 ```
