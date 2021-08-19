@@ -699,7 +699,7 @@ decompk.soil.eco.carova = lm(decompk.row.soil.eco.co$decompk ~ decompk.row.soil.
 anova(decompk.soil.eco.carova)
 ```
 
-```#{r RDA decomp to soil}
+```{r RDA decomp to soil}
 decompk.col.soil=merge(decompk.allspec.col,soil.dat,by="Plot")
 decompk.col.soil=merge(decompk.col.soil,plotdesig, by="Plot")
 dim(decompk.col.soil)
