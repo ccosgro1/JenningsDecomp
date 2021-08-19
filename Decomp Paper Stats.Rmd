@@ -1061,11 +1061,12 @@ anova(phos.botup.querub.mod)
 #emmeans(phos.botup.querub.mod, pairwise~Harvest)
 
 ##Riparian Bottomland
-phos.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=phos.ripbot)
-#phos.ripbot.mod=lme(activity.lg~Species*Harvest, random=~1|Plot, data=phos.ripbot)
+#phos.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=phos.ripbot)
+phos.ripbot.mod=lme(activity.lg~Species*Harvest, random=~1|Plot, data=phos.ripbot)
 anova(phos.ripbot.mod)
 emmeans(phos.ripbot.mod,pairwise~Species)
 
+#order
 phos.ripbot$LumpTrans=factor(phos.ripbot$LumpTrans, levels=c("R","RB","B"))
 phos.ripbot$Species=factor(phos.ripbot$Species, levels=c("CAROVA","ACESAC","QUERUB"))
 #plot
@@ -1118,6 +1119,24 @@ bglu.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bglu.ripu
 anova(bglu.ripup.mod)
 emmeans(bglu.ripup.mod,pairwise~Species*Harvest)
 
+#order
+bglu.ripup$LumpTrans=factor(bglu.ripup$LumpTrans, levels=c("R","RU","U"))
+bglu.ripup$Species=factor(bglu.ripup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(bglu.ripup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+
 bglu.ripup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bglu.ripup.acesac)
 anova(bglu.ripup.acesac.mod)
 emmeans(bglu.ripup.acesac.mod, pairwise~Harvest)
@@ -1133,6 +1152,25 @@ anova(bglu.ripup.querub.mod)
 ##Bottomland Upland
 bglu.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bglu.botup)
 anova(bglu.botup.mod)
+
+#order
+bglu.botup$LumpTrans=factor(bglu.botup$LumpTrans, levels=c("B","UB","U"))
+bglu.botup$Species=factor(bglu.botup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(bglu.botup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")+
+  scale_y_continuous(limits=c(0,10))
 
 bglu.botup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bglu.botup.acesac)
 anova(bglu.botup.acesac.mod)
@@ -1150,6 +1188,24 @@ emmeans(bglu.botup.querub.mod, pairwise~Harvest)
 ##Riparian Bottomland
 bglu.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bglu.ripbot)
 anova(bglu.ripbot.mod)
+
+#order
+bglu.ripbot$LumpTrans=factor(bglu.ripbot$LumpTrans, levels=c("R","RB","B"))
+bglu.ripbot$Species=factor(bglu.ripbot$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(bglu.ripbot, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
 
 bglu.ripbot.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bglu.ripbot.acesac)
 anova(bglu.ripbot.acesac.mod)
@@ -1171,6 +1227,24 @@ bcell.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bcell.ri
 anova(bcell.ripup.mod)
 emmeans(bcell.ripup.mod,pairwise~Species)
 
+#order
+bcell.ripup$LumpTrans=factor(bcell.ripup$LumpTrans, levels=c("R","RU","U"))
+bcell.ripup$Species=factor(bcell.ripup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(bcell.ripup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+
 bcell.ripup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bcell.ripup.acesac)
 anova(bcell.ripup.acesac.mod)
 emmeans(bcell.ripup.acesac.mod, pairwise~Harvest)
@@ -1187,13 +1261,33 @@ emmeans(bcell.ripup.querub.mod, pairwise~Harvest)
 bcell.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bcell.botup)
 anova(bcell.botup.mod)
 
+#order
+bcell.botup$LumpTrans=factor(bcell.botup$LumpTrans, levels=c("B","UB","U"))
+bcell.botup$Species=factor(bcell.botup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(bcell.botup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")+
+  scale_y_continuous(limits=c(0,10))
+
 bcell.botup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bcell.botup.acesac)
 anova(bcell.botup.acesac.mod)
 emmeans(bcell.botup.acesac.mod, pairwise~Harvest)
 
 bcell.botup.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bcell.botup.carova)
 anova(bcell.botup.carova.mod)
-emmeans(bcell.botup.carova.mod, pairwise~Harvest)
+#emmeans(bcell.botup.carova.mod, pairwise~Harvest)
+##nothing is significant on its own.
 
 bcell.botup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bcell.botup.querub)
 anova(bcell.botup.querub.mod)
@@ -1204,11 +1298,29 @@ bcell.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bcell.r
 anova(bcell.ripbot.mod)
 emmeans(bcell.ripbot.mod,pairwise~Species)
 
+#order
+bcell.ripbot$LumpTrans=factor(bcell.ripbot$LumpTrans, levels=c("R","RB","B"))
+bcell.ripbot$Species=factor(bcell.ripbot$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(bcell.ripbot, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+
 bcell.ripbot.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bcell.ripbot.acesac)
 anova(bcell.ripbot.acesac.mod)
 emmeans(bcell.ripbot.acesac.mod, pairwise~Harvest)
 
-bcell.ripbot.carova.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bcell.ripbot.carova)
+bcell.ripbot.carova.mod=lme(activity.lg~Harvest, random=~1|Plot, data=bcell.ripbot.carova)
 anova(bcell.ripbot.carova.mod)
 emmeans(bcell.ripbot.carova.mod, pairwise~Harvest)
 
@@ -1220,6 +1332,24 @@ emmeans(bcell.ripbot.querub.mod, pairwise~Harvest)
 bxyl.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bxyl.ripup)
 anova(bxyl.ripup.mod)
 emmeans(bxyl.ripup.mod,pairwise~Species)
+
+#order
+bxyl.ripup$LumpTrans=factor(bxyl.ripup$LumpTrans, levels=c("R","RU","U"))
+bxyl.ripup$Species=factor(bxyl.ripup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(bxyl.ripup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
 
 bxyl.ripup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bxyl.ripup.acesac)
 anova(bxyl.ripup.acesac.mod)
@@ -1236,6 +1366,25 @@ emmeans(bxyl.ripup.querub.mod, pairwise~Harvest)
 ##Bottomland Upland
 bxyl.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bxyl.botup)
 anova(bxyl.botup.mod)
+
+#order
+bxyl.botup$LumpTrans=factor(bxyl.botup$LumpTrans, levels=c("B","UB","U"))
+bxyl.botup$Species=factor(bxyl.botup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(bxyl.botup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")+
+  scale_y_continuous(limits=c(0,10))
 
 bxyl.botup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bxyl.botup.acesac)
 anova(bxyl.botup.acesac.mod)
@@ -1254,6 +1403,24 @@ bxyl.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=bxyl.rip
 anova(bxyl.ripbot.mod)
 emmeans(bxyl.ripbot.mod,pairwise~Species)
 
+#order
+bxyl.ripbot$LumpTrans=factor(bxyl.ripbot$LumpTrans, levels=c("R","RB","B"))
+bxyl.ripbot$Species=factor(bxyl.ripbot$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(bxyl.ripbot, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+
 bxyl.ripbot.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=bxyl.ripbot.acesac)
 anova(bxyl.ripbot.acesac.mod)
 emmeans(bxyl.ripbot.acesac.mod, pairwise~Harvest)
@@ -1271,6 +1438,24 @@ anova(bxyl.ripbot.querub.mod)
 lap.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=lap.ripup)
 anova(lap.ripup.mod)
 
+#order
+lap.ripup$LumpTrans=factor(lap.ripup$LumpTrans, levels=c("R","RU","U"))
+lap.ripup$Species=factor(lap.ripup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(lap.ripup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+
 lap.ripup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=lap.ripup.acesac)
 anova(lap.ripup.acesac.mod)
 #emmeans(lap.ripup.acesac.mod, pairwise~Harvest)
@@ -1287,6 +1472,25 @@ anova(lap.ripup.querub.mod) #Marginal
 lap.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=lap.botup)
 anova(lap.botup.mod)
 
+#order
+lap.botup$LumpTrans=factor(lap.botup$LumpTrans, levels=c("B","UB","U"))
+lap.botup$Species=factor(lap.botup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(lap.botup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")+
+  scale_y_continuous(limits=c(0,10))
+
 lap.botup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=lap.botup.acesac)
 anova(lap.botup.acesac.mod)
 #emmeans(lap.botup.acesac.mod, pairwise~Harvest)
@@ -1302,6 +1506,24 @@ anova(lap.botup.querub.mod)
 #Riparian Bottomland
 lap.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=lap.ripbot)
 anova(lap.ripbot.mod)
+
+#order
+lap.ripbot$LumpTrans=factor(lap.ripbot$LumpTrans, levels=c("R","RB","B"))
+lap.ripbot$Species=factor(lap.ripbot$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(lap.ripbot, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
 
 lap.ripbot.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=lap.ripbot.acesac)
 anova(lap.ripbot.acesac.mod)
@@ -1321,6 +1543,24 @@ nag.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=nag.ripup)
 anova(nag.ripup.mod)
 emmeans(nag.ripup.mod,pairwise~Species)
 
+#order
+nag.ripup$LumpTrans=factor(nag.ripup$LumpTrans, levels=c("R","RU","U"))
+nag.ripup$Species=factor(nag.ripup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(nag.ripup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+
 nag.ripup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=nag.ripup.acesac)
 anova(nag.ripup.acesac.mod)
 emmeans(nag.ripup.acesac.mod, pairwise~Harvest)
@@ -1336,6 +1576,25 @@ emmeans(nag.ripup.querub.mod, pairwise~Harvest)
 #Bottomland Upland
 nag.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=nag.botup)
 anova(nag.botup.mod)
+
+#order
+nag.botup$LumpTrans=factor(nag.botup$LumpTrans, levels=c("B","UB","U"))
+nag.botup$Species=factor(nag.botup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(nag.botup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")+
+  scale_y_continuous(limits=c(0,10))
 
 nag.botup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=nag.botup.acesac)
 anova(nag.botup.acesac.mod)
@@ -1354,6 +1613,24 @@ emmeans(nag.botup.querub.mod, pairwise~Harvest)
 nag.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=nag.ripbot)
 anova(nag.ripbot.mod)
 
+#order
+nag.ripbot$LumpTrans=factor(nag.ripbot$LumpTrans, levels=c("R","RB","B"))
+nag.ripbot$Species=factor(nag.ripbot$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(nag.ripbot, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+
 nag.ripbot.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=nag.ripbot.acesac)
 anova(nag.ripbot.acesac.mod)
 #emmeans(nag.ripbot.acesac.mod, pairwise~Harvest)
@@ -1371,6 +1648,24 @@ anova(nag.ripbot.querub.mod)
 dopa.ripup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=dopa.ripup)
 anova(dopa.ripup.mod)
 
+#order
+dopa.ripup$LumpTrans=factor(dopa.ripup$LumpTrans, levels=c("R","RU","U"))
+dopa.ripup$Species=factor(dopa.ripup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(dopa.ripup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+
 dopa.ripup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=dopa.ripup.acesac)
 anova(dopa.ripup.acesac.mod)
 emmeans(dopa.ripup.acesac.mod, pairwise~Harvest)
@@ -1387,6 +1682,25 @@ anova(dopa.ripup.querub.mod)
 dopa.botup.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=dopa.botup)
 anova(dopa.botup.mod)
 
+#order
+dopa.botup$LumpTrans=factor(dopa.botup$LumpTrans, levels=c("B","UB","U"))
+dopa.botup$Species=factor(dopa.botup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(dopa.botup, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")+
+  scale_y_continuous(limits=c(0,10))
+
 dopa.botup.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=dopa.botup.acesac)
 anova(dopa.botup.acesac.mod)
 #emmeans(dopa.botup.acesac.mod, pairwise~Harvest)
@@ -1402,6 +1716,24 @@ anova(dopa.botup.querub.mod)
 ##Riparian Bottomland
 dopa.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=dopa.ripbot)
 anova(dopa.ripbot.mod)
+
+#order
+dopa.ripbot$LumpTrans=factor(dopa.ripbot$LumpTrans, levels=c("R","RB","B"))
+dopa.ripbot$Species=factor(dopa.ripbot$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+#plot
+ggplot(dopa.ripbot, aes(x=LumpTrans,y=activity.lg,colour=Species))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
 
 dopa.ripbot.acesac.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=dopa.ripbot.acesac)
 anova(dopa.ripbot.acesac.mod)
@@ -1487,6 +1819,7 @@ h2o2.botup.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=h2
 anova(h2o2.botup.querub.mod)
 #emmeans(h2o2.botup.querub.mod, pairwise~Harvest)
 
+#riparian bottomland
 h2o2.ripbot.mod=lme(activity.lg~LumpTrans*Species, random=~1|Plot, data=h2o2.ripbot)
 anova(h2o2.ripbot.mod)
 emmeans(h2o2.ripbot.mod, pairwise~LumpTrans)
@@ -1521,6 +1854,1054 @@ emmeans(h2o2.ripbot.carova.mod, pairwise~LumpTrans)
 h2o2.ripbot.querub.mod=lme(activity.lg~LumpTrans*Harvest, random=~1|Plot, data=h2o2.ripbot.querub)
 anova(h2o2.ripbot.querub.mod)
 #emmeans(h2o2.ripbot.querub.mod, pairwise~Harvest)
+
+####phos graph####
+##Riparian Upland
+#acesac
+ggplot(phos.ripup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(phos.ripup.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(phos.ripup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+
+##Bottomland Upland
+#acesac
+ggplot(phos.botup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(phos.botup.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(phos.botup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+##Riparian Bottomland
+#acesac
+ggplot(phos.ripbot.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(phos.ripbot.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(phos.ripbot.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+####bglu graph####
+##Riparian Upland
+#acesac
+ggplot(bglu.ripup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(bglu.ripup.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(bglu.ripup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+
+##Bottomland Upland
+#acesac
+ggplot(bglu.botup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(bglu.botup.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(bglu.botup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+##Riparian Bottomland
+#acesac
+ggplot(bglu.ripbot.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(bglu.ripbot.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(bglu.ripbot.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+
+####bcell graph####
+##Riparian Upland
+#acesac
+ggplot(bcell.ripup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(bcell.ripup.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(bcell.ripup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+
+##Bottomland Upland
+#acesac
+ggplot(bcell.botup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(bcell.botup.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(bcell.botup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+##Riparian Bottomland
+#acesac
+ggplot(bcell.ripbot.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(bcell.ripbot.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(bcell.ripbot.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+
+####bxyl graph####
+##Riparian Upland
+#acesac
+ggplot(bxyl.ripup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(bxyl.ripup.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(bxyl.ripup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+
+##Bottomland Upland
+#acesac
+ggplot(bxyl.botup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(bxyl.botup.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(bxyl.botup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+##Riparian Bottomland
+#acesac
+ggplot(bxyl.ripbot.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(bxyl.ripbot.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(bxyl.ripbot.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+####lap graph####
+##Riparian Upland
+#acesac
+ggplot(lap.ripup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(lap.ripup.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(lap.ripup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+
+##Bottomland Upland
+#acesac
+ggplot(lap.botup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(lap.botup.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(lap.botup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+##Riparian Bottomland
+#acesac
+ggplot(lap.ripbot.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(lap.ripbot.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(lap.ripbot.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+####nag graph####
+##Riparian Upland
+#acesac
+ggplot(nag.ripup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(nag.ripup.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(nag.ripup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+##Bottomland Upland
+#acesac
+ggplot(nag.botup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(nag.botup.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(nag.botup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+##Riparian Bottomland
+#acesac
+ggplot(nag.ripbot.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(nag.ripbot.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(nag.ripbot.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+####dopa graph####
+##Riparian Upland
+#acesac
+ggplot(dopa.ripup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(dopa.ripup.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(dopa.ripup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+##Bottomland Upland
+#acesac
+ggplot(dopa.botup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(dopa.botup.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(dopa.botup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+##Riparian Bottomland
+#acesac
+ggplot(dopa.ripbot.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(dopa.ripbot.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(dopa.ripbot.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+####h2o2 graph####
+##Riparian Upland
+#acesac
+ggplot(h2o2.ripup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(h2o2.ripup.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(h2o2.ripup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+##Bottomland Upland
+#acesac
+ggplot(h2o2.botup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(h2o2.botup.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(h2o2.botup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+##Riparian Bottomland
+#acesac
+ggplot(h2o2.ripbot.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#carova
+ggplot(h2o2.ripbot.carova, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
+#querub
+ggplot(h2o2.ripbot.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=30),
+        axis.title=element_text(size=30),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")
 ```
 
 ```{r enzyme soil rda}
