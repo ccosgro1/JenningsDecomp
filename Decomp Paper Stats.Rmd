@@ -36,11 +36,12 @@ dopaact.dat=read.csv("DataTxtFiles/dopaenzymeactivity.csv", header=TRUE)
 ## Log transform enzyme activity data
 #First, make all negative activities 1 so that the log(1)=0. We will run all stats on log activity, so this will fix errors associated with created "Inf" or "NaN"s
 colnames(hydroact.dat)
-hydroact.dat$activity[hydroact.dat$activity<0]<-01
-dopaact.dat$activity[dopaact.dat$activity<0]<-01
+hydroact.dat$activity[hydroact.dat$activity<1]<-01
+dopaact.dat$activity[dopaact.dat$activity<1]<-01
 #Take the log of the variables. Note: there's lots of previously neg numbers and really low values in dopa activity. That means we're gonna get a lot of neg and really low log numbers.
 hydroact.dat$activity.lg=log(as.numeric(as.character(hydroact.dat$activity)))
 dopaact.dat$activity.lg=log(as.numeric(as.character(dopaact.dat$activity)))
+##One value in the abova DOPA code refuses to change to a 1 which is weird AF. Anyway. We'll just cut it out later. Fuck it.
 
 #merge enzyme and site data
 hydroact.dat=merge(hydroact.dat,decomp.samp,by="Bag.ID")
