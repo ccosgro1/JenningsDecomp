@@ -46,7 +46,7 @@ dopaact.dat$activity.lg=log(as.numeric(as.character(dopaact.dat$activity)))
 #merge enzyme and site data
 hydroact.dat=merge(hydroact.dat,decomp.samp,by="Bag.ID")
 hydroact.dat=merge(hydroact.dat,soil.dat)
-dopaact.dat=merge(dopaact.dat,decomp.samp)
+dopaact.dat=merge(dopaact.dat,decomp.samp,by="Bag.ID")
 dopaact.dat=merge(dopaact.dat,soil.dat)
 ```
 
