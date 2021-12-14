@@ -1,0 +1,31 @@
+---
+title: "Leaf Chemistry Analyses"
+author: "Colleen"
+date: "12/14/2021"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load data}
+leafchem=read.csv("leafchemcalcs.csv", header=TRUE)
+dim(leafchem)
+#Because of the highlighting and stuff in the excel file, there are extra rows. Cut them out
+leafchem=leafchem[1:9,]
+```
+
+
+```{r stats}
+##non-polar extractives
+colnames(leafchem)
+npe=aov(leafchem$prop.nonpolar.extract..ash.free.~leafchem$species)
+summary(npe)
+
+##polar extractives
+pe=aov(leafchem$prop.polar.extract..ash.free.~leafchem$species)
+summary(pe)
+```
