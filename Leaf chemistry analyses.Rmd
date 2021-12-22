@@ -16,6 +16,9 @@ leafchem=read.csv("leafchemcalcs.csv", header=TRUE)
 dim(leafchem)
 #Because of the highlighting and stuff in the excel file, there are extra rows. Cut them out
 leafchem=leafchem[1:9,]
+
+###libraries
+library(ggpubr)
 ```
 
 
@@ -24,8 +27,26 @@ leafchem=leafchem[1:9,]
 colnames(leafchem)
 npe=aov(leafchem$prop.nonpolar.extract..ash.free.~leafchem$species)
 summary(npe)
+shapiro.test(leafchem$prop.nonpolar.extract..ash.free.)
+ggqqplot(leafchem$prop.nonpolar.extract..ash.free.)
+##there's an outlier - this is from the 3rd CAROVA sample, which was spilled a little during lab processing, so unsurprising.
+npe.attempt=leafchem[1:8,]
+npe2=aov(npe.attempt$prop.nonpolar.extract..ash.free.~npe.attempt$species)
+summary(npe2)
+shapiro.test(npe.attempt$prop.nonpolar.extract..ash.free.)
 
 ##polar extractives
 pe=aov(leafchem$prop.polar.extract..ash.free.~leafchem$species)
 summary(pe)
+shapiro.test(leafchem$prop.polar.extract..ash.free.)
+
+##acid-hydrolysable compounds
+ahc=aov(leafchem$prop.AH.cell.wall.compds..ash.free.~leafchem$species)
+summary(ahc)
+shapiro.test(leafchem$prop.AH.cell.wall.compds..ash.free.)
+
+##non-acid hydrolysable compounds
+nahc=aov(leafchem$prop.NAH.cell.wall.compds..ash.free.~leafchem$species)
+summary(nahc)
+shapiro.test(leafchem$prop.NAH.cell.wall.compds..ash.free.)
 ```
