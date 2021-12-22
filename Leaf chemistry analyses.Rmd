@@ -15,7 +15,8 @@ knitr::opts_chunk$set(echo = TRUE)
 leafchem=read.csv("leafchemcalcs.csv", header=TRUE)
 dim(leafchem)
 #Because of the highlighting and stuff in the excel file, there are extra rows. Cut them out
-leafchem=leafchem[1:9,]
+leafchem=leafchem[1:8,]
+##CAROVA T03 is an outlier because I fucked up that sample - we'll just cut it out now so it doesn't screw up the analyses.
 
 ###libraries
 library(ggpubr)
@@ -29,11 +30,6 @@ npe=aov(leafchem$prop.nonpolar.extract..ash.free.~leafchem$species)
 summary(npe)
 shapiro.test(leafchem$prop.nonpolar.extract..ash.free.)
 ggqqplot(leafchem$prop.nonpolar.extract..ash.free.)
-##there's an outlier - this is from the 3rd CAROVA sample, which was spilled a little during lab processing, so unsurprising.
-npe.attempt=leafchem[1:8,]
-npe2=aov(npe.attempt$prop.nonpolar.extract..ash.free.~npe.attempt$species)
-summary(npe2)
-shapiro.test(npe.attempt$prop.nonpolar.extract..ash.free.)
 
 ##polar extractives
 pe=aov(leafchem$prop.polar.extract..ash.free.~leafchem$species)
