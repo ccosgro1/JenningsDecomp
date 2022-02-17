@@ -382,6 +382,7 @@ decompk.row.desig=decompk.row.desig[decompk.row.desig$LumpedTrans!="S",]
 
 ## decomp by terr type and plot WITHIN transect types
 massloss.lumped=lme(as.numeric(as.character(decompk))~LumpedTrans,random=~1|Plot, data=decompk.row.desig)
+anova(massloss.lumped)
 summary(massloss.lumped)
 #And add species into the model
 massloss.lumped.sp=lme(as.numeric(as.character(decompk))~LumpedTrans*Species,random=~1|Plot, data=decompk.row.desig)
@@ -418,7 +419,7 @@ ggplot(decompk.row.ripup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),
   scale_y_continuous(limits=c(-6.5,0))+
   stat_summary(fun="mean", geom="point",position=position_dodge(0.5), size=6)
 #Box plots
-ggplot(decompk.row.ripup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),colour=Species))+
+ggplot(decompk.row.ripup, aes(x=Species,y=as.numeric(as.character(decompk)),colour=LumpedTrans))+
   geom_boxplot(position=position_dodge(0.9), size=1)+
   #ggtitle("RipUp TerrTypexSpecies")+
   theme_bw()+
@@ -427,7 +428,7 @@ ggplot(decompk.row.ripup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),
         axis.text=element_text(size=30),
         axis.title=element_text(size=30),
         axis.title.x=element_blank(),
-        legend.position="none"
+        legend.position=c("right")
         )+
   ylab("Decay K")+
   scale_y_continuous(limits=c(-6.5,0))
@@ -458,7 +459,7 @@ ggplot(decompk.row.botup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),
   scale_y_continuous(limits=c(-6.5,0))+
   stat_summary(fun="mean", geom="point",position=position_dodge(0.5), size=6)
 #Box plot
-ggplot(decompk.row.botup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),colour=Species))+
+ggplot(decompk.row.botup, aes(x=Species,y=as.numeric(as.character(decompk)),colour=LumpedTrans))+
   geom_boxplot(position=position_dodge(0.9), size=1)+
   #ggtitle("BotUp TerrTypexSpecies")+
   theme_bw()+
@@ -469,7 +470,7 @@ ggplot(decompk.row.botup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
-        legend.position = "none"
+        legend.position = "right"
         )+
   ylab("Decay K")+
   scale_y_continuous(limits=c(-6.5,0))
@@ -500,7 +501,7 @@ ggplot(decompk.row.ripbot, aes(x=LumpedTrans,y=as.numeric(as.character(decompk))
   scale_y_continuous(limits=c(-6.5,0))+
   stat_summary(fun="mean", geom="point",position=position_dodge(0.5), size=6)
 #Box plots
-ggplot(decompk.row.ripbot, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),colour=Species))+
+ggplot(decompk.row.ripbot, aes(x=Species,y=as.numeric(as.character(decompk)),colour=LumpedTrans))+
   geom_boxplot(position=position_dodge(0.9), size=1)+
   #ggtitle("Riparian-Bottomland")+
   theme_bw()+
@@ -829,6 +830,33 @@ anova(decompk.rda.fulsoil)
 RsquareAdj(decompk.rda.fulsoil)
 global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
 ```
+```{r RDA decomp to leaf chem}
+## Load the leaf chemistry data
+leafchem.avg=read.csv("C:/Users/crc31/OneDrive/Documents/School/Research/Data/Decomp/leaf chemistry averages.csv", header=TRUE)
+
+## Merge leaf chem averages to the decay rates.
+decayk.chem=merge(decompk.allspec.row,leafchem.avg,by="Species")
+dim(decayk.chem)
+
+## stats; respsonse variable: decay rate, explanatory variables: leaf chem
+#AOV with NPE
+NPE.k=aov(decayk.chem$decompk~decayk.chem$Nonpolar.extractives)
+anova(NPE.k)
+#AOV with PE
+PE.k=aov(decayk.chem$decompk~decayk.chem$Polar.extractives)
+anova(PE.k)
+#AOV with AH
+AH.k=aov(decayk.chem$decompk~decayk.chem$AH.compounds)
+anova(AH.k)
+#AOV with NAH
+NAH.k=aov(decayk.chem$decompk~decayk.chem$NAH.compounds)
+anova(NAH.k)
+
+## Decay by species. I'm sure this is done somwhere else, but I'm too lazy to find it... Here we go.
+species.k=aov(decayk.chem$decompk~decayk.chem$Species)
+anova(species.k)
+```
+
 
 ```{r enzyme harvest position mixed model}
 #####Subset and prep the datasets####
