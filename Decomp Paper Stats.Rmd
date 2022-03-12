@@ -715,6 +715,12 @@ decompk.col.soil=na.exclude(decompk.col.soil)
 dim(decompk.col.soil)
 
 ##ALL soil variables does not have a significant effect (could be from over saturation of model from too many variables?)
+## Full model
+decompk.rda.fulsoil = rda(decompk.col.soil[,5:7], decompk.col.soil[,17:41])
+anova(decompk.rda.fulsoil)
+RsquareAdj(decompk.rda.fulsoil)
+global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
+
 #long variables
 decompk.rda.fulsoil = rda(decompk.col.soil[,5:7], decompk.col.soil[,17:24])
 anova(decompk.rda.fulsoil)
