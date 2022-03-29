@@ -1,6 +1,6 @@
 ---
 title: "Untitled"
-author: "Colleen Cosgrove"
+author: "crc31 Cosgrove"
 date: "July 22, 2020"
 output: html_document
 editor_options: 
@@ -15,8 +15,8 @@ knitr::opts_chunk$set(echo = TRUE)
 enzymeact=read.csv("enzymeactivityorganized.csv")
 dim(enzymeact)
 na.omit(enzymeact)
-plotnames=read.csv("C:/Users/Colleen/OneDrive/Documents/School/Research/Data/Decomp/decompsampleplots.csv")
-decomp=read.csv("C:/Users/Colleen/OneDrive/Documents/School/Research/Data/Decomp/decomprawdata.csv")
+plotnames=read.csv("C:/Users/crc31/OneDrive/Documents/School/Research/Data/Decomp/decompsampleplots.csv")
+decomp=read.csv("C:/Users/crc31/OneDrive/Documents/School/Research/Data/Decomp/decomprawdata.csv")
 colnames(plotnames)[1]="Sample"
 colnames(decomp)[1]="Sample"
 enz.dat=merge(plotnames,decomp,by="Sample")
@@ -33,12 +33,14 @@ library(ggplot2)
 
 ```{r glmm enzyme by species, ecotone and harvest}
 colnames(enz.dat)
-bglu=lme(bglu~Species*Ecotone*Harvest,random=~1|Plot,data=enz.dat)
+bglu=lme(bglu~Species.x*Ecotone*Harvest,random=~1|Plot,data=enz.dat)
+anova(bglu)
 summary(bglu)
 
 enz.bcell=enz.dat
 enz.bcell=enz.bcell[!is.na(enz.bcell$bcell),]
-bcell=lme(bcell~Species*Ecotone*Harvest,random=~1|Plot,data=enz.bcell)
+bcell=lme(bcell~Species.x*Ecotone*Harvest,random=~1|Plot,data=enz.bcell)
+anova(bcell)
 summary(bcell)
 
 enz.bxyl=enz.dat
