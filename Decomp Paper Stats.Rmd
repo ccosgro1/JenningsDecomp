@@ -862,6 +862,21 @@ anova(NAH.k)
 species.k=aov(decayk.chem$decompk~decayk.chem$Species)
 anova(species.k)
 ```
+```{r RDA decomp to enzyme}
+##Merge the enzyme activity with the decompk rates
+decompk.enzyme.dopa=merge(decompk.allspec.row,dopaact.dat, by="Plot")
+decompk.rda.kdopa = rda(as.numeric(as.character(decompk.enzyme.dopa[,c(3,5,7)])), Enzyme, data=decompk.enzyme.dopa)
+anova(decompk.rda.kdopa)
+RsquareAdj(decompk.rda.fulsoil)
+global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
+
+
+##Hydrolase enzymes
+decompk.enzyme.hydro=merge(decompk.allspec.col,hydroact.dat, by="Plot")
+
+#RDA?
+decompk.rda.k.hydro=lm(as.numeric(as.character(decompk.enzyme.hydro[,c(3,5,7)])),decompk.enzyme.hydro$Enzyme)
+```
 
 
 ```{r enzyme harvest position mixed model}
@@ -993,7 +1008,7 @@ h2o2.botup.querub=h2o2.botup[h2o2.botup$Species=="QUERUB",]
 
 ####Full data models. Literally useless.####
 #Lme using log activity as repsonse variable 
-dopamod=lme(activity.lg~Enzyme*TerrType,random=~1|Plot, data=dopaact.dat)
+dopamod=lme(activity.lg~Enzyme,random=~1|Plot, data=dopaact.dat)
 anova(dopamod) #No significance
 
 hydromod=lme(activity.lg~Enzyme*TerrType,random=~1|Plot, data=hydroact.dat)
@@ -3156,6 +3171,10 @@ anova(phos.soil.mod)
 phos.soil.eco.mod = lm(phos.dat.core$activity.lg ~ phos.dat.core$TerrType)
 anova(phos.soil.eco.mod)
 
+##Look at trends
+plot(phos.dat.core$activity.lg~phos.dat.core$ps1_long)
+plot(phos.dat.core$activity.lg~phos.dat.core$moist_nug)
+
 ####bglu####
 dim(bglu.dat)
 bglu.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=bglu.dat)
@@ -3165,6 +3184,10 @@ anova(bglu.soil.mod)
 bglu.soil.eco.mod = lm(bglu.dat$activity.lg ~ bglu.dat$TerrType)
 anova(bglu.soil.eco.mod)
 
+##Check for trends
+plot(bglu.dat$activity.lg~bglu.dat$pH_long)
+plot(bglu.dat$activity.lg~bglu.dat$moist_short)
+
 ###CORE###
 bglu.dat.core=bglu.dat[bglu.dat$Ecotone!="Ecotone",]
 bglu.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=bglu.dat.core)
@@ -3173,6 +3196,11 @@ anova(bglu.soil.mod)
 #Check for an ecosystem effect
 bglu.soil.eco.mod = lm(bglu.dat.core$activity.lg ~ bglu.dat.core$TerrType)
 anova(bglu.soil.eco.mod)
+
+##Check for trends
+plot(bglu.dat.core$activity.lg~bglu.dat.core$pH_long)
+plot(bglu.dat.core$activity.lg~bglu.dat.core$moist_short)
+plot(bglu.dat.core$activity.lg~bglu.dat.core$moist_nug)
 
 ####
 
@@ -3185,6 +3213,9 @@ anova(bcell.soil.mod)
 bcell.soil.eco.mod = lm(bcell.dat$activity.lg ~ bcell.dat$TerrType)
 anova(bcell.soil.eco.mod)
 
+##Check for trends
+plot(bcell.dat$activity.lg~bcell.dat$ps1_long)
+
 ###CORE###
 bcell.dat.core=bcell.dat[bcell.dat$Ecotone!="Ecotone",]
 bcell.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=bcell.dat.core)
@@ -3193,6 +3224,9 @@ anova(bcell.soil.mod)
 #Check for an ecosystem effect
 bcell.soil.eco.mod = lm(bcell.dat.core$activity.lg ~ bcell.dat.core$TerrType)
 anova(bcell.soil.eco.mod)
+
+##Check for trends
+plot(bcell.dat.core$activity.lg~bcell.dat.core$ps1_long)
 
 ####bxyl####
 dim(bxyl.dat)
@@ -3275,6 +3309,11 @@ anova(h2o2.soil.mod)
 h2o2.soil.eco.mod = lm(h2o2.dat$activity.lg ~ h2o2.dat$TerrType)
 anova(h2o2.soil.eco.mod)
 
+##Check for trends
+plot(h2o2.dat$activity.lg~h2o2.dat$Ptot_long)
+plot(h2o2.dat$activity.lg~h2o2.dat$pH_long)
+plot(h2o2.dat$activity.lg~h2o2.dat$ps1_nug)
+
 ###CORE###
 h2o2.dat.core=h2o2.dat[h2o2.dat$Ecotone!="Ecotone",]
 h2o2.soil.mod=lme(activity.lg~Ptot_long+Po_long+pH_long+moist_long +ps1_long+ps2_long+percc_long+cton_long+Ptot_short+Po_short+pH_short+moist_short +ps1_short+percc_short+cton_short+Ptot_nug+Po_nug+pH_nug+moist_nug +ps1_nug+percc_nug+cton_nug,random=~1|Plot, data=h2o2.dat.core)
@@ -3283,4 +3322,8 @@ anova(h2o2.soil.mod)
 #Check for an ecosystem effect
 h2o2.soil.eco.mod = lm(h2o2.dat.core$activity.lg ~ h2o2.dat.core$TerrType)
 anova(h2o2.soil.eco.mod)
+
+##Check for trends
+plot(h2o2.dat.core$activity.lg~h2o2.dat.core$Ptot_long)
+plot(h2o2.dat.core$activity.lg~h2o2.dat.core$pH_long)
 ```
