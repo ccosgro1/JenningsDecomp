@@ -18,9 +18,12 @@ dim(leafchem)
 leafchem=leafchem[1:8,]
 ##CAROVA T03 is an outlier because I fucked up that sample - we'll just cut it out now so it doesn't screw up the analyses.
 
+lig.n=read.csv("costech.data.csv",header=TRUE)
+
 ###libraries
 library(ggpubr)
 library(stats)
+library(nlme)
 ```
 
 
@@ -54,4 +57,24 @@ summary(nahc)
 shapiro.test(leafchem$prop.NAH.cell.wall.compds..ash.free.)
 TukeyHSD(nahc)
 boxplot(leafchem$prop.NAH.cell.wall.compds..ash.free.~order,main="Non-Acid Hydrolysable",ylab="NAH conc", xlab="Species")
+
+###Costech Stats
+##C:N
+order=factor(lig.n$Species, levels=c("CAROVA", "ACESAC","QUERUB"))
+colnames(lig.n)
+cton=aov(lig.n$C.N~lig.n$Species)
+summary(cton)
+shapiro.test(lig.n$C.N)
+ggqqplot(lig.n$C.N)
+boxplot(lig.n$C.N~order, main="C:N", ylab="C:N", xlab="Species")
+
+##NAH:N
+chem=merge(leafchem, lig.n)
+dim(chem)
+
+nah.n=aov(chem$prop.nonpolar.extract..ash.free.~chem$Nitrogen)
+summary(nah.n)
+ggplot(chem, aes(x=prop.nonpolar.extract..ash.free., y=Nitrogen, color=species))+
+  geom_point(size=4)+
+  theme_bw()
 ```
