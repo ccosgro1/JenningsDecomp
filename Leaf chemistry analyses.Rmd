@@ -74,7 +74,7 @@ dim(chem)
 
 nah.n=aov(chem$prop.nonpolar.extract..ash.free.~chem$Nitrogen)
 summary(nah.n)
-ggplot(chem, aes(x=prop.nonpolar.extract..ash.free., y=Nitrogen, color=species))+
+ggplot(chem, aes(x=Nitrogen, y=prop.nonpolar.extract..ash.free., color=species))+
   geom_point(size=4)+
   theme_bw()
 ```
