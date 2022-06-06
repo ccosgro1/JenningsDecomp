@@ -3109,7 +3109,7 @@ RsquareAdj(dopa.rda.fulsoil)
 global.thresh=RsquareAdj(dopa.rda.fulsoil)$adj.r.squared
 
 ##Core+Edge
-dopaact.dat.eco==dopaact.dat.eco[dopaact.dat.eco$EP=="Core"|dopaact.dat.eco$EP=="Edge",]
+dopaact.dat.eco=dopaact.dat.eco[dopaact.dat.eco$EP=="Core"|dopaact.dat.eco$EP=="Edge",]
 #dopa enzymes ~ soil variables
 #gotta remove some NAs in the soil variables to make this code work.
 dopaact.dat.eco=na.exclude(dopaact.dat.eco)
