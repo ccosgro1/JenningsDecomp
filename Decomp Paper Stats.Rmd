@@ -874,17 +874,23 @@ anova(species.k)
 ```{r RDA decomp to enzyme}
 ##Merge the enzyme activity with the decompk rates
 decompk.enzyme.dopa=merge(decompk.allspec.row,dopaact.dat, by="Plot")
-decompk.rda.kdopa = rda(as.numeric(as.character(decompk.enzyme.dopa[,c(3,5,7)])), Enzyme, data=decompk.enzyme.dopa)
-anova(decompk.rda.kdopa)
-RsquareAdj(decompk.rda.fulsoil)
-global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
+decompk.enzyme.dopa=decompk.enzyme.dopa[decompk.enzyme.dopa$activity.lg!="Inf",]
+#anova(decomp k~enzyme type)
+decompk.aov.kdopa = aov(as.numeric(as.character(decompk.enzyme.dopa[,3]))~decompk.enzyme.dopa$Enzyme)
+anova(decompk.aov.kdopa)
+#lm(decomp~enzyme activity)
+decompk.stat.dopa=lm(as.numeric(as.character(decompk.enzyme.dopa[,3]))~decompk.enzyme.dopa$activity.lg)
+anova(decompk.stat.dopa)
 
-
-##Hydrolase enzymes
+##Hydrolase enzymes - merge
 decompk.enzyme.hydro=merge(decompk.allspec.col,hydroact.dat, by="Plot")
-
-#RDA?
-decompk.rda.k.hydro=lm(as.numeric(as.character(decompk.enzyme.hydro[,c(3,5,7)])),decompk.enzyme.hydro$Enzyme)
+decompk.enzyme.hydro=decompk.enzyme.hydro[decompk.enzyme.hydro$activity.lg!="Inf",]
+#anova(decomp k ~ Enzyme type)
+decompk.aov.khydro = aov(as.numeric(as.character(decompk.enzyme.hydro[,3]))~decompk.enzyme.hydro$Enzyme)
+anova(decompk.aov.khydro)
+#lm(decomp~enzyme activity)
+decompk.stat.hydro=lm(as.numeric(as.character(decompk.enzyme.hydro[,3]))~decompk.enzyme.hydro$activity.lg)
+anova(decompk.stat.hydro)
 ```
 
 
@@ -3093,10 +3099,11 @@ hydroact.dat.eco=merge(hydroact.dat,plotdesig)
 dim(hydroact.dat.eco)
 colnames(hydroact.dat.eco)
 
+####DOPA ENZYMES####
 #dopa enzymes ~ soil variables
 #gotta remove some NAs in the soil variables to make this code work.
 dopaact.dat.eco=na.exclude(dopaact.dat.eco)
-dopa.rda.fulsoil = rda(dopaact.dat.eco[,53], dopaact.dat.eco[,21:45])
+dopa.rda.fulsoil = rda(as.numeric(as.character(dopaact.dat.eco[,53])), dopaact.dat.eco[,21:45])
 anova(dopa.rda.fulsoil)
 RsquareAdj(dopa.rda.fulsoil)
 global.thresh=RsquareAdj(dopa.rda.fulsoil)$adj.r.squared
@@ -3112,7 +3119,7 @@ dopa.sel
 
 ##Check for an ecosystem effect
 #dopa enzymes ~ Terr Type
-dopa.rda.fulsoil = lm(dopaact.dat.eco[,53]~ dopaact.dat.eco[,2])
+dopa.rda.fulsoil = lm(dopaact.dat.eco[,53]~ dopaact.dat.eco[,8])
 anova(dopa.rda.fulsoil)
 RsquareAdj(dopa.rda.fulsoil)
 global.thresh=RsquareAdj(dopa.rda.fulsoil)$adj.r.squared
@@ -3142,22 +3149,90 @@ anova(dopa.rda.fulsoil)
 RsquareAdj(dopa.rda.fulsoil)
 global.thresh=RsquareAdj(dopa.rda.fulsoil)$adj.r.squared
 
-# Hydro enzymes
-hydroact.dat=na.exclude(hydroact.dat)
-hydro.rda.fulsoil = rda(hydroact.dat[,53], hydroact.dat[,21:45])
+##Core
+dopaact.dat.eco=dopaact.dat.eco[dopaact.dat.eco$EP=="Core",]
+#dopa enzymes ~ soil variables
+#gotta remove some NAs in the soil variables to make this code work.
+dopaact.dat.eco=na.exclude(dopaact.dat.eco)
+dopa.rda.fulsoil = rda(dopaact.dat.eco[,53], dopaact.dat.eco[,21:45])
+anova(dopa.rda.fulsoil)
+RsquareAdj(dopa.rda.fulsoil)
+global.thresh=RsquareAdj(dopa.rda.fulsoil)$adj.r.squared
+
+dopa.rda.fulsoil.none = rda(dopaact.dat.eco[,53]~1)
+dopa.rda.fulsoil = rda(dopaact.dat.eco[,53], dopaact.dat.eco[,21:45])
+
+dopa.rda.fulsoil.full=rda(dopaact.dat.eco[,53]~dopaact.dat.eco$Ptot_long+dopaact.dat.eco$Po_long+dopaact.dat.eco$pH_long+dopaact.dat.eco$moist_long+dopaact.dat.eco$ps1_long+dopaact.dat.eco$ps2_long+dopaact.dat.eco$percc_long+dopaact.dat.eco$cton_long+dopaact.dat.eco$Ptot_nug+dopaact.dat.eco$Po_nug+dopaact.dat.eco$pH_nug+dopaact.dat.eco$moist_nug+dopaact.dat.eco$ps1_nug+dopaact.dat.eco$ps2_nug+dopaact.dat.eco$percc_nug+dopaact.dat.eco$cton_nug+dopaact.dat.eco$Ptot_short+dopaact.dat.eco$Po_short+dopaact.dat.eco$pH_short+dopaact.dat.eco$moist_short +dopaact.dat.eco$ps1_short+dopaact.dat.eco$percc_short+dopaact.dat.eco$cton_short)
+
+dopa.sel=ordiR2step(dopa.rda.fulsoil.none,scope=formula(dopa.rda.fulsoil.full),Pin=0.05,R2scope=TRUE)
+dopa.sel
+#Forward selection picks: pH_long, ps1_nug, moist_short
+
+##Check for an ecosystem effect
+dopa.rda.fulsoil = lm(dopaact.dat.eco[,53]~ dopaact.dat.eco[,2])
+anova(dopa.rda.fulsoil)
+summary(dopa.rda.fulsoil)
+RsquareAdj(dopa.rda.fulsoil)
+global.thresh=RsquareAdj(dopa.rda.fulsoil)$adj.r.squared
+
+
+####Hydro enzymes####
+hydroact.dat.eco=na.exclude(hydroact.dat.eco)
+hydro.rda.fulsoil = rda(hydroact.dat.eco[,53], hydroact.dat.eco[,21:45])
 anova(hydro.rda.fulsoil)
 RsquareAdj(hydro.rda.fulsoil)
 global.thresh=RsquareAdj(hydro.rda.fulsoil)$adj.r.squared
 
-hydro.rda.fulsoil.none = rda(hydroact.dat[,53]~1)
-hydro.rda.fulsoil = rda(hydroact.dat[,53], hydroact.dat[,21:45])
+hydro.rda.fulsoil.none = rda(hydroact.dat.eco[,53]~1)
+hydro.rda.fulsoil = rda(hydroact.dat.eco[,53], hydroact.dat.eco[,21:45])
 
-hydro.rda.fulsoil.full=rda(hydroact.dat[,53]~hydroact.dat$Ptot_long+hydroact.dat$Po_long+hydroact.dat$pH_long+hydroact.dat$moist_long+hydroact.dat$ps1_long+hydroact.dat$ps2_long+hydroact.dat$percc_long+hydroact.dat$cton_long+hydroact.dat$Ptot_nug+hydroact.dat$Po_nug+hydroact.dat$pH_nug+hydroact.dat$moist_nug+hydroact.dat$ps1_nug+hydroact.dat$ps2_nug+hydroact.dat$percc_nug+hydroact.dat$cton_nug+hydroact.dat$Ptot_short+hydroact.dat$Po_short+hydroact.dat$pH_short+hydroact.dat$moist_short +hydroact.dat$ps1_short+hydroact.dat$percc_short+hydroact.dat$cton_short)
+hydro.rda.fulsoil.full=rda(hydroact.dat.eco[,53]~hydroact.dat.eco$Ptot_long+hydroact.dat.eco$Po_long+hydroact.dat.eco$pH_long+hydroact.dat.eco$moist_long+hydroact.dat.eco$ps1_long+hydroact.dat.eco$ps2_long+hydroact.dat.eco$percc_long+hydroact.dat.eco$cton_long+hydroact.dat.eco$Ptot_nug+hydroact.dat.eco$Po_nug+hydroact.dat.eco$pH_nug+hydroact.dat.eco$moist_nug+hydroact.dat.eco$ps1_nug+hydroact.dat.eco$ps2_nug+hydroact.dat.eco$percc_nug+hydroact.dat.eco$cton_nug+hydroact.dat.eco$Ptot_short+hydroact.dat.eco$Po_short+hydroact.dat.eco$pH_short+hydroact.dat.eco$moist_short +hydroact.dat.eco$ps1_short+hydroact.dat.eco$percc_short+hydroact.dat.eco$cton_short)
 
 hydro.sel=ordiR2step(hydro.rda.fulsoil.none,scope=formula(hydro.rda.fulsoil.full),Pin=0.05,R2scope=TRUE)
 hydro.sel
 #Forward selection: moist_nug, pH_nug, pH_long; ps1_nug
 
+##Check for an ecosystem effect
+hydro.rda.fulsoil = lm(hydroact.dat.eco[,53]~hydroact.dat.eco[,8])
+anova(hydro.rda.fulsoil)
+RsquareAdj(hydro.rda.fulsoil)
+global.thresh=RsquareAdj(hydro.rda.fulsoil)$adj.r.squared
+
+
+# Core+edge
+hydroact.dat.eco=hydroact.dat.eco[hydroact.dat.eco$EP!="Trans",]
+hydro.rda.fulsoil = rda(hydroact.dat.eco[,53], hydroact.dat.eco[,21:45])
+anova(hydro.rda.fulsoil)
+RsquareAdj(hydro.rda.fulsoil)
+global.thresh=RsquareAdj(hydro.rda.fulsoil)$adj.r.squared
+
+hydro.rda.fulsoil.none = rda(hydroact.dat.eco[,53]~1)
+hydro.rda.fulsoil = rda(hydroact.dat.eco[,53], hydroact.dat.eco[,21:45])
+
+hydro.rda.fulsoil.full=rda(hydroact.dat.eco[,53]~hydroact.dat.eco$Ptot_long+hydroact.dat.eco$Po_long+hydroact.dat.eco$pH_long+hydroact.dat.eco$moist_long+hydroact.dat.eco$ps1_long+hydroact.dat.eco$ps2_long+hydroact.dat.eco$percc_long+hydroact.dat.eco$cton_long+hydroact.dat.eco$Ptot_nug+hydroact.dat.eco$Po_nug+hydroact.dat.eco$pH_nug+hydroact.dat.eco$moist_nug+hydroact.dat.eco$ps1_nug+hydroact.dat.eco$ps2_nug+hydroact.dat.eco$percc_nug+hydroact.dat.eco$cton_nug+hydroact.dat.eco$Ptot_short+hydroact.dat.eco$Po_short+hydroact.dat.eco$pH_short+hydroact.dat.eco$moist_short +hydroact.dat.eco$ps1_short+hydroact.dat.eco$percc_short+hydroact.dat.eco$cton_short)
+
+hydro.sel=ordiR2step(hydro.rda.fulsoil.none,scope=formula(hydro.rda.fulsoil.full),Pin=0.05,R2scope=TRUE)
+hydro.sel
+#Forward selection: moist_nug, pH_nug, pH_long; ps1_nug
+
+##Check for an ecosystem effect
+hydro.rda.fulsoil = lm(hydroact.dat.eco[,53]~hydroact.dat.eco[,8])
+anova(hydro.rda.fulsoil)
+RsquareAdj(hydro.rda.fulsoil)
+global.thresh=RsquareAdj(hydro.rda.fulsoil)$adj.r.squared
+
+# Core
+hydroact.dat.eco=hydroact.dat.eco[hydroact.dat.eco$EP=="Core",]
+hydro.rda.fulsoil = rda(hydroact.dat.eco[,53], hydroact.dat.eco[,21:45])
+anova(hydro.rda.fulsoil)
+RsquareAdj(hydro.rda.fulsoil)
+global.thresh=RsquareAdj(hydro.rda.fulsoil)$adj.r.squared
+
+##Check for an ecosystem effect
+hydro.rda.fulsoil = lm(hydroact.dat.eco[,53]~hydroact.dat.eco[,8])
+anova(hydro.rda.fulsoil)
+RsquareAdj(hydro.rda.fulsoil)
+global.thresh=RsquareAdj(hydro.rda.fulsoil)$adj.r.squared
 ```
 
 
