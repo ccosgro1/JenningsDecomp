@@ -839,10 +839,13 @@ global.thresh=RsquareAdj(decompk.rda.fulsoil)$adj.r.squared
 ```{r RDA decomp to leaf chem}
 ## Load the leaf chemistry data
 leafchem.avg=read.csv("C:/Users/crc31/OneDrive/Documents/School/Research/Data/Decomp/leaf chemistry averages.csv", header=TRUE)
+lig.n=read.csv("costech.data.avg.csv",header=TRUE)
 
 ## Merge leaf chem averages to the decay rates.
 decayk.chem=merge(decompk.allspec.row,leafchem.avg,by="Species")
 dim(decayk.chem)
+## Merge in the costech data
+decayk.chem=merge(decayk.chem,lig.n,by="Species")
 
 ## stats; respsonse variable: decay rate, explanatory variables: leaf chem
 #AOV with NPE
@@ -857,6 +860,12 @@ anova(AH.k)
 #AOV with NAH
 NAH.k=aov(decayk.chem$decompk~decayk.chem$NAH.compounds)
 anova(NAH.k)
+##AOV with C:N
+cton.k=aov(decayk.chem$decompk~decayk.chem$C.N)
+anova(cton.k)
+##AOV with nitrogen
+n.k=aov(decayk.chem$decompk~decayk.chem$Nitrogen)
+anova(n.k)
 
 ## Decay by species. I'm sure this is done somwhere else, but I'm too lazy to find it... Here we go.
 species.k=aov(decayk.chem$decompk~decayk.chem$Species)
