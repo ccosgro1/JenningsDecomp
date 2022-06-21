@@ -405,7 +405,7 @@ emmeans(massloss.ripup.splt, pairwise ~ LumpedTrans*Species)
 
 #Order the transect logically
 decompk.row.ripup$LumpedTrans=factor(decompk.row.ripup$LumpedTrans, levels=c("R","UR","U"))
-decompk.row.ripup$Species=factor(decompk.row.ripup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+decompk.row.ripup$Species=factor(decompk.row.ripup$Species, levels=c("ACESAC","CAROVA","QUERUB"))
 #plot. Gotta think about the best way to display these data.
 ggplot(decompk.row.ripup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),colour=Species,group=Species))+
   geom_point(position=position_dodge(0.5), size=4)+
@@ -425,12 +425,15 @@ ggplot(decompk.row.ripup, aes(x=Species,y=as.numeric(as.character(decompk)),colo
   theme_bw()+
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
-        axis.text=element_text(size=30),
-        axis.title=element_text(size=30),
+        axis.text=element_text(size=16),
+        axis.title=element_text(size=20),
         axis.title.x=element_blank(),
-        legend.position=c("right")
+        legend.position = "top",
+        axis.ticks.length = unit(-0.25,"cm"),
+        aspect.ratio = 0.75
         )+
-  ylab("Decay K")+
+  scale_color_manual(values=c("darkolivegreen3","cornsilk4","cornflowerblue"))+
+  ylab("Decay k")+
   scale_y_continuous(limits=c(-6.5,0))
 
 ####Bottomland-upland transect####
@@ -445,7 +448,7 @@ emmeans(massloss.botup.splt, pairwise ~ LumpedTrans*Species)
 
 #Order the transect logically
 decompk.row.botup$LumpedTrans=factor(decompk.row.botup$LumpedTrans, levels=c("B","UB","U"))
-decompk.row.botup$Species=factor(decompk.row.botup$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+decompk.row.botup$Species=factor(decompk.row.botup$Species, levels=c("ACESAC","CAROVA","QUERUB"))
 #Plot.
 ggplot(decompk.row.botup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),colour=Species,group=Species))+
   geom_point(position=position_dodge(0.5), size=4)+
@@ -461,18 +464,21 @@ ggplot(decompk.row.botup, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),
 #Box plot
 ggplot(decompk.row.botup, aes(x=Species,y=as.numeric(as.character(decompk)),colour=LumpedTrans))+
   geom_boxplot(position=position_dodge(0.9), size=1)+
-  #ggtitle("BotUp TerrTypexSpecies")+
+  #ggtitle("RipUp TerrTypexSpecies")+
   theme_bw()+
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
-        axis.text=element_text(size=30),
+        axis.text=element_text(size=16),
         axis.title=element_text(size=30),
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
-        legend.position = "right"
+        legend.position = "top",
+        axis.ticks.length = unit(-0.25,"cm"),
+        aspect.ratio = 0.75
         )+
-  ylab("Decay K")+
+  scale_color_manual(values=c("coral","cornsilk4","cornflowerblue"))+
+  ylab("Decay k")+
   scale_y_continuous(limits=c(-6.5,0))
 
 ####Riparian-bottomland transect####
@@ -487,7 +493,7 @@ emmeans(massloss.ripbot.splt, pairwise ~ LumpedTrans*Species)
 
 #Order the transect accordingly
 decompk.row.ripbot$LumpedTrans=factor(decompk.row.ripbot$LumpedTrans, levels=c("R", "RB","B"))
-decompk.row.ripbot$Species=factor(decompk.row.ripbot$Species, levels=c("CAROVA","ACESAC","QUERUB"))
+decompk.row.ripbot$Species=factor(decompk.row.ripbot$Species, levels=c("ACESAC","CAROVA","QUERUB"))
 #Plot
 ggplot(decompk.row.ripbot, aes(x=LumpedTrans,y=as.numeric(as.character(decompk)),colour=Species,group=Species))+
   geom_point(position=position_dodge(0.5), size=4)+
@@ -500,21 +506,27 @@ ggplot(decompk.row.ripbot, aes(x=LumpedTrans,y=as.numeric(as.character(decompk))
   ylab("Decay K")+
   scale_y_continuous(limits=c(-6.5,0))+
   stat_summary(fun="mean", geom="point",position=position_dodge(0.5), size=6)
-#Box plots
+#Box plot
 ggplot(decompk.row.ripbot, aes(x=Species,y=as.numeric(as.character(decompk)),colour=LumpedTrans))+
   geom_boxplot(position=position_dodge(0.9), size=1)+
-  #ggtitle("Riparian-Bottomland")+
+  #ggtitle("RipUp TerrTypexSpecies")+
   theme_bw()+
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
-        axis.text=element_text(size=40),
+        axis.text=element_text(size=16),
         axis.title=element_text(size=30),
-        axis.text.y=element_blank(),
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
-        legend.text = element_text(size=20))+
-  ylab("Decay K")+
+        axis.text.y = element_blank(),
+        axis.ticks.length = unit(-0.25,"cm"),
+        aspect.ratio = 0.75,
+        legend.position = "top"
+        )+
+  ylab("Decay k")+
+  scale_color_manual(values=c("darkolivegreen3","cornsilk4","coral"))+
   scale_y_continuous(limits=c(-6.5,0))
+
+
 ```
 ```{r linear model with Terr Type lumped trans single species}
 ####Riparian to Upland transect####
@@ -1923,6 +1935,23 @@ anova(h2o2.ripbot.querub.mod)
 
 ####phos graph####
 ##Riparian Upland
+ggplot(phos.ripup, aes(x=Species,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=16),
+        axis.title=element_text(size=20),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.position = "none",
+        axis.ticks.length = unit(-0.25,"cm"),
+        aspect.ratio = 0.75)+
+  ylab("Enzyme activity (nmol/h/g)")+
+  scale_y_continuous(limits=c(0,10))
+
 #acesac
 ggplot(phos.ripup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
   geom_boxplot(position=position_dodge(0.9), size=1)+
@@ -1962,14 +1991,31 @@ ggplot(phos.ripup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
         panel.grid.minor = element_blank(),
         axis.text=element_text(size=30),
         axis.title=element_text(size=30),
-        #axis.text.y=element_blank(),
+        axis.text.y=element_blank(),
         axis.title.x = element_blank(),
-        #axis.title.y = element_blank(),
+        axis.title.y = element_blank(),
         legend.text = element_text(size=20))+
   ylab("Enzyme activity (nmol/h/g)")+
   scale_y_continuous(limits=c(0,10))
 
 ##Bottomland Upland
+ggplot(phos.botup, aes(x=Species,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=16),
+        axis.title=element_text(size=20),
+        axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        legend.position = "none",
+        axis.ticks.length = unit(-0.25,"cm"),
+        aspect.ratio = 0.75)+
+  ylab("Enzyme activity (nmol/h/g)")+
+  scale_y_continuous(limits=c(0,10))
+
 #acesac
 phos.botup.acesac$LumpTrans=factor(phos.botup.acesac$LumpTrans, levels=c("B","UB","U"))
 ggplot(phos.botup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
@@ -2019,6 +2065,24 @@ ggplot(phos.botup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
   ylab("Enzyme activity (nmol/h/g)")+
   scale_y_continuous(limits=c(0,10))
 ##Riparian Bottomland
+##Bottomland Upland
+ggplot(phos.ripbot, aes(x=Species,y=activity.lg,colour=Harvest))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=16),
+        axis.title=element_text(size=20),
+        axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        legend.position = "right",
+        axis.ticks.length = unit(-0.25,"cm"),
+        aspect.ratio = 0.75)+
+  ylab("Enzyme activity (nmol/h/g)")+
+  scale_y_continuous(limits=c(0,10))
+
 #acesac
 phos.ripbot.acesac$LumpTrans=factor(phos.ripbot.acesac$LumpTrans, levels=c("R","RB","B"))
 ggplot(phos.ripbot.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+

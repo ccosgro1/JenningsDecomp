@@ -19,6 +19,7 @@ plotnames=read.csv("C:/Users/crc31/OneDrive/Documents/School/Research/Data/Decom
 decomp=read.csv("C:/Users/crc31/OneDrive/Documents/School/Research/Data/Decomp/decomprawdata.csv")
 colnames(plotnames)[1]="Sample"
 colnames(decomp)[1]="Sample"
+colnames(enzymeact)[1]="Sample"
 enz.dat=merge(plotnames,decomp,by="Sample")
 enz.dat=merge(enz.dat,enzymeact,by="Sample")
 dim(enz.dat)
@@ -31,46 +32,46 @@ library(ggplot2)
 ```
 
 
-```{r glmm enzyme by species, ecotone and harvest}
+```{r glmm enzyme by Species.x, ecotone and harvest}
 colnames(enz.dat)
-bglu=lme(bglu~Species.x*Ecotone*Harvest,random=~1|Plot,data=enz.dat)
+bglu=lme(bglu~Species.x.x*Ecotone*Harvest,random=~1|Plot,data=enz.dat)
 anova(bglu)
 summary(bglu)
 
 enz.bcell=enz.dat
 enz.bcell=enz.bcell[!is.na(enz.bcell$bcell),]
-bcell=lme(bcell~Species.x*Ecotone*Harvest,random=~1|Plot,data=enz.bcell)
+bcell=lme(bcell~Species.x.x*Ecotone*Harvest,random=~1|Plot,data=enz.bcell)
 anova(bcell)
 summary(bcell)
 
 enz.bxyl=enz.dat
 enz.bxyl=enz.bxyl[!is.na(enz.bxyl$bxyl),]
-bxyl=lme(bxyl~Species*Ecotone*Harvest,random=~1|Plot,data=enz.bxyl)
+bxyl=lme(bxyl~Species.x.x*Ecotone*Harvest,random=~1|Plot,data=enz.bxyl)
 summary(bxyl)
 
 enz.lap=enz.dat
 enz.lap=enz.lap[!is.na(enz.lap$lap),]
-lap=lme(lap~Species*Ecotone*Harvest,random=~1|Plot,data=enz.lap)
+lap=lme(lap~Species.x.x*Ecotone*Harvest,random=~1|Plot,data=enz.lap)
 summary(lap)
 
 enz.nag=enz.dat
 enz.nag=enz.nag[!is.na(enz.nag$nag),]
-nag=lme(nag~Species*Ecotone*Harvest,random=~1|Plot,data=enz.nag)
+nag=lme(nag~Species.x.x*Ecotone*Harvest,random=~1|Plot,data=enz.nag)
 summary(nag)
 
 enz.phos=enz.dat
 enz.phos=enz.phos[!is.na(enz.phos$phos),]
-phos=lme(phos~Species*Ecotone*Harvest,random=~1|Plot,data=enz.phos)
+phos=lme(phos~Species.x.x*Ecotone*Harvest,random=~1|Plot,data=enz.phos)
 summary(phos)
 ```
 
 ```{r plot}
-plot(bglu~Species*Harvest,data=enz.dat)
-plot(bcell~Species*Harvest,data=enz.bcell)
-plot(bxyl~Species*Harvest,data=enz.bxyl)
-plot(phos~Species*Harvest,data=enz.phos)
-plot(lap~Species*Harvest,data=enz.lap)
-plot(nag~Species*Harvest,data=enz.nag)
+plot(bglu~Species.x*Harvest,data=enz.dat)
+plot(bcell~Species.x*Harvest,data=enz.bcell)
+plot(bxyl~Species.x*Harvest,data=enz.bxyl)
+plot(phos~Species.x*Harvest,data=enz.phos)
+plot(lap~Species.x*Harvest,data=enz.lap)
+plot(nag~Species.x*Harvest,data=enz.nag)
 
 ##ggplot
 #subset into harvests and enzymes
@@ -97,7 +98,7 @@ sdbglu=sd(enz.dat$bglu)
 
 
 ##bar plots of enzyme activity
-ggplot(bgluh1,aes(fill=Species,y=bglu,x=Ecotone)) +
+ggplot(bgluh1,aes(fill=Species.x,y=bglu,x=Ecotone)) +
   geom_bar(position="dodge",stat="identity")+
   geom_errorbar(aes(ymin=(mean(bglu)-sdbglu),ymax=(mean(bglu)+sdbglu)),width=0.2, position=position_dodge(0.9))+
   ylab("Bglu Activity")+
@@ -114,7 +115,7 @@ ggplot(bgluh1,aes(fill=Species,y=bglu,x=Ecotone)) +
         axis.text.x = element_text(size=12),
         axis.text.y = element_text(size=12),
         axis.line = element_line(color="black", size=0.5, linetype = "solid"))
-ggplot(bgluh2,aes(fill=Species,y=bglu,x=Ecotone)) +
+ggplot(bgluh2,aes(fill=Species.x,y=bglu,x=Ecotone)) +
   geom_bar(position="dodge",stat="identity")+
    #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
   ylab("Bglu Activity")+
@@ -130,7 +131,7 @@ ggplot(bgluh2,aes(fill=Species,y=bglu,x=Ecotone)) +
         axis.text.x = element_text(size=12),
         axis.text.y = element_text(size=12),
         axis.line = element_line(color="black", size=0.5, linetype = "solid"))
-ggplot(bgluh3,aes(fill=Species,y=bglu,x=Ecotone)) +
+ggplot(bgluh3,aes(fill=Species.x,y=bglu,x=Ecotone)) +
   geom_bar(position="dodge",stat="identity")+
    #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
   ylab("Bglu Activity")+
@@ -148,7 +149,7 @@ ggplot(bgluh3,aes(fill=Species,y=bglu,x=Ecotone)) +
         axis.line = element_line(color="black", size=0.5, linetype = "solid"))
 
 #### bcell ####
-ggplot(bcellh1,aes(fill=Species,y=bcell,x=Ecotone)) +
+ggplot(bcellh1,aes(fill=Species.x,y=bcell,x=Ecotone)) +
   geom_bar(position="dodge",stat="identity")+
   #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
   ylab("bcell Activity")+
@@ -164,7 +165,7 @@ ggplot(bcellh1,aes(fill=Species,y=bcell,x=Ecotone)) +
         axis.text.x = element_text(size=12),
         axis.text.y = element_text(size=12),
         axis.line = element_line(color="black", size=0.5, linetype = "solid"))
-ggplot(bcellh2,aes(fill=Species,y=bcell,x=Ecotone)) +
+ggplot(bcellh2,aes(fill=Species.x,y=bcell,x=Ecotone)) +
   geom_bar(position="dodge",stat="identity")+
    #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
   ylab("bcell Activity")+
@@ -180,7 +181,7 @@ ggplot(bcellh2,aes(fill=Species,y=bcell,x=Ecotone)) +
         axis.text.x = element_text(size=12),
         axis.text.y = element_text(size=12),
         axis.line = element_line(color="black", size=0.5, linetype = "solid"))
-ggplot(bcellh3,aes(fill=Species,y=bcell,x=Ecotone)) +
+ggplot(bcellh3,aes(fill=Species.x,y=bcell,x=Ecotone)) +
   geom_bar(position="dodge",stat="identity")+
    #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
   ylab("bcell Activity")+
@@ -198,7 +199,7 @@ ggplot(bcellh3,aes(fill=Species,y=bcell,x=Ecotone)) +
         axis.line = element_line(color="black", size=0.5, linetype = "solid"))
 
 #### bxyl ####
-ggplot(bxylh1,aes(fill=Species,y=bxyl,x=Ecotone)) +
+ggplot(bxylh1,aes(fill=Species.x,y=bxyl,x=Ecotone)) +
   geom_bar(position="dodge",stat="identity")+
   #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
   ylab("bxyl Activity")+
@@ -214,7 +215,7 @@ ggplot(bxylh1,aes(fill=Species,y=bxyl,x=Ecotone)) +
         axis.text.x = element_text(size=12),
         axis.text.y = element_text(size=12),
         axis.line = element_line(color="black", size=0.5, linetype = "solid"))
-ggplot(bxylh2,aes(fill=Species,y=bxyl,x=Ecotone)) +
+ggplot(bxylh2,aes(fill=Species.x,y=bxyl,x=Ecotone)) +
   geom_bar(position="dodge",stat="identity")+
    #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
   ylab("bxyl Activity")+
@@ -230,7 +231,7 @@ ggplot(bxylh2,aes(fill=Species,y=bxyl,x=Ecotone)) +
         axis.text.x = element_text(size=12),
         axis.text.y = element_text(size=12),
         axis.line = element_line(color="black", size=0.5, linetype = "solid"))
-ggplot(bxylh3,aes(fill=Species,y=bxyl,x=Ecotone)) +
+ggplot(bxylh3,aes(fill=Species.x,y=bxyl,x=Ecotone)) +
   geom_bar(position="dodge",stat="identity")+
    #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
   ylab("bxyl Activity")+
@@ -248,7 +249,7 @@ ggplot(bxylh3,aes(fill=Species,y=bxyl,x=Ecotone)) +
         axis.line = element_line(color="black", size=0.5, linetype = "solid"))
 
 #### lap ####
-ggplot(laph1,aes(fill=Species,y=lap,x=Ecotone)) +
+ggplot(laph1,aes(fill=Species.x,y=lap,x=Ecotone)) +
   geom_bar(position="dodge",stat="identity")+
   #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
   ylab("lap Activity")+
@@ -264,7 +265,7 @@ ggplot(laph1,aes(fill=Species,y=lap,x=Ecotone)) +
         axis.text.x = element_text(size=12),
         axis.text.y = element_text(size=12),
         axis.line = element_line(color="black", size=0.5, linetype = "solid"))
-ggplot(laph2,aes(fill=Species,y=lap,x=Ecotone)) +
+ggplot(laph2,aes(fill=Species.x,y=lap,x=Ecotone)) +
   geom_bar(position="dodge",stat="identity")+
    #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
   ylab("lap Activity")+
@@ -280,7 +281,7 @@ ggplot(laph2,aes(fill=Species,y=lap,x=Ecotone)) +
         axis.text.x = element_text(size=12),
         axis.text.y = element_text(size=12),
         axis.line = element_line(color="black", size=0.5, linetype = "solid"))
-ggplot(laph3,aes(fill=Species,y=lap,x=Ecotone)) +
+ggplot(laph3,aes(fill=Species.x,y=lap,x=Ecotone)) +
   geom_bar(position="dodge",stat="identity")+
    #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
   ylab("lap Activity")+
@@ -297,8 +298,9 @@ ggplot(laph3,aes(fill=Species,y=lap,x=Ecotone)) +
         axis.text.y = element_text(size=12),
         axis.line = element_line(color="black", size=0.5, linetype = "solid"))
 
+####nag####
 ##bar plots of enzyme activity
-ggplot(nagh1,aes(fill=Species,y=nag,x=Ecotone)) +
+ggplot(nagh1,aes(fill=Species.x,y=nag,x=Ecotone)) +
   geom_bar(position="dodge",stat="identity")+
   #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
   ylab("nag Activity")+
@@ -314,7 +316,7 @@ ggplot(nagh1,aes(fill=Species,y=nag,x=Ecotone)) +
         axis.text.x = element_text(size=12),
         axis.text.y = element_text(size=12),
         axis.line = element_line(color="black", size=0.5, linetype = "solid"))
-ggplot(nagh2,aes(fill=Species,y=nag,x=Ecotone)) +
+ggplot(nagh2,aes(fill=Species.x,y=nag,x=Ecotone)) +
   geom_bar(position="dodge",stat="identity")+
    #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
   ylab("nag Activity")+
@@ -330,7 +332,7 @@ ggplot(nagh2,aes(fill=Species,y=nag,x=Ecotone)) +
         axis.text.x = element_text(size=12),
         axis.text.y = element_text(size=12),
         axis.line = element_line(color="black", size=0.5, linetype = "solid"))
-ggplot(nagh3,aes(fill=Species,y=nag,x=Ecotone)) +
+ggplot(nagh3,aes(fill=Species.x,y=nag,x=Ecotone)) +
   geom_bar(position="dodge",stat="identity")+
    #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
   ylab("nag Activity")+
@@ -347,8 +349,9 @@ ggplot(nagh3,aes(fill=Species,y=nag,x=Ecotone)) +
         axis.text.y = element_text(size=12),
         axis.line = element_line(color="black", size=0.5, linetype = "solid"))
 
+#### phos ####
 ##bar plots of enzyme activity
-ggplot(phosh1,aes(fill=Species,y=phos,x=Ecotone)) +
+ggplot(phosh1,aes(fill=Species.x,y=phos,x=Ecotone)) +
   geom_bar(position="dodge",stat="identity")+
   #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
   ylab("phos Activity")+
@@ -364,7 +367,7 @@ ggplot(phosh1,aes(fill=Species,y=phos,x=Ecotone)) +
         axis.text.x = element_text(size=12),
         axis.text.y = element_text(size=12),
         axis.line = element_line(color="black", size=0.5, linetype = "solid"))
-ggplot(phosh2,aes(fill=Species,y=phos,x=Ecotone)) +
+ggplot(phosh2,aes(fill=Species.x,y=phos,x=Ecotone)) +
   geom_bar(position="dodge",stat="identity")+
    #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
   ylab("phos Activity")+
@@ -380,7 +383,7 @@ ggplot(phosh2,aes(fill=Species,y=phos,x=Ecotone)) +
         axis.text.x = element_text(size=12),
         axis.text.y = element_text(size=12),
         axis.line = element_line(color="black", size=0.5, linetype = "solid"))
-ggplot(phosh3,aes(fill=Species,y=phos,x=Ecotone)) +
+ggplot(phosh3,aes(fill=Species.x,y=phos,x=Ecotone)) +
   geom_bar(position="dodge",stat="identity")+
    #geom_errorbar(aes(ymin=mean-sdbg1,ymax=mean+sdbg1),width=0.2, position=position_dodge(0.9))+
   ylab("phos Activity")+
@@ -396,6 +399,30 @@ ggplot(phosh3,aes(fill=Species,y=phos,x=Ecotone)) +
         axis.text.x = element_text(size=12),
         axis.text.y = element_text(size=12),
         axis.line = element_line(color="black", size=0.5, linetype = "solid"))
+
+
+###let's match these plots to the Fig 1. stuff for the dissertation:
+
+#Box plot
+ggplot(phosh3, aes(x=Species.x,y=phos,colour=Ecotone))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("RipUp TerrTypexSpecies")+
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=16),
+        axis.title=element_text(size=30),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.length = unit(-0.25,"cm"),
+        aspect.ratio = 0.75,
+        legend.position = "top"
+        )+
+  ylab("Decay k")+
+  scale_color_manual(values=c("darkolivegreen3","cornsilk4","coral"))+
+  scale_y_continuous(limits=c(-6.5,0))
+
 
 ```
 
