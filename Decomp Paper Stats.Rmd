@@ -429,10 +429,11 @@ ggplot(decompk.row.ripup, aes(x=Species,y=as.numeric(as.character(decompk)),colo
         axis.title=element_text(size=20),
         axis.title.x=element_blank(),
         legend.position = "top",
+        legend.text=element_text(size=16),
         axis.ticks.length = unit(-0.25,"cm"),
         aspect.ratio = 0.75
         )+
-  scale_color_manual(values=c("darkolivegreen3","cornsilk4","cornflowerblue"))+
+  scale_color_manual(values=c("violetred4","cornsilk4","darkblue"))+
   ylab("Decay rate (k)")+
   scale_y_continuous(limits=c(-6.5,0))
 
@@ -474,10 +475,11 @@ ggplot(decompk.row.botup, aes(x=Species,y=as.numeric(as.character(decompk)),colo
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         legend.position = "top",
+        legend.text=element_text(size=16),
         axis.ticks.length = unit(-0.25,"cm"),
         aspect.ratio = 0.75
         )+
-  scale_color_manual(values=c("coral","cornsilk4","cornflowerblue"))+
+  scale_color_manual(values=c("seagreen4","cornsilk4","darkblue"))+
   ylab("Decay k")+
   scale_y_continuous(limits=c(-6.5,0))
 
@@ -520,10 +522,11 @@ ggplot(decompk.row.ripbot, aes(x=Species,y=as.numeric(as.character(decompk)),col
         axis.text.y = element_blank(),
         axis.ticks.length = unit(-0.25,"cm"),
         aspect.ratio = 0.75,
+        legend.text=element_text(size=16),
         legend.position = "top"
         )+
   ylab("Decay k")+
-  scale_color_manual(values=c("darkolivegreen3","cornsilk4","coral"))+
+  scale_color_manual(values=c("violetred4","cornsilk4","seagreen4"))+
   scale_y_continuous(limits=c(-6.5,0))
 
 
@@ -2864,6 +2867,21 @@ ggplot(nag.ripbot.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
   scale_y_continuous(limits=c(0,15))
 ####dopa graph####
 ##Riparian Upland
+ggplot(dopa.ripup, aes(x=Species,y=activity.lg,colour=LumpTrans))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=16),
+        axis.title=element_text(size=16),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=20))+
+  ylab("Enzyme activity (nmol/h/g)")+
+  scale_y_continuous(limits=c(0,5))
+
 #acesac
 ggplot(dopa.ripup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
   geom_boxplot(position=position_dodge(0.9), size=1)+
@@ -2871,8 +2889,8 @@ ggplot(dopa.ripup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
   theme_bw()+
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
-        axis.text=element_text(size=30),
-        axis.title=element_text(size=30),
+        axis.text=element_text(size=16),
+        axis.title=element_text(size=16),
         #axis.text.y=element_blank(),
         axis.title.x = element_blank(),
         #axis.title.y = element_blank(),
@@ -3004,11 +3022,31 @@ ggplot(dopa.ripbot.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
         #axis.text.y=element_blank(),
         axis.title.x = element_blank(),
         #axis.title.y = element_blank(),
-        legend.text = element_text(size=20))+
+        legend.text = element_text(size=20),
+        legend.position = "top")+
   ylab("Enzyme activity (nmol/h/g)")+
   scale_y_continuous(limits=c(0,5))
 ####h2o2 graph####
 ##Riparian Upland
+ggplot(h2o2.ripup, aes(x=Species,y=activity.lg,colour=LumpTrans))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_text(size=16),
+        axis.title=element_text(size=16),
+        #axis.text.y=element_blank(),
+        axis.title.x = element_blank(),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=16),
+        legend.position="top",
+        aspect.ratio=1,
+        axis.ticks.length = unit(-0.2,"cm"))+
+  ylab("Enzyme activity (nmol/h/g)")+
+  scale_color_manual(values=c("violetred4","cornsilk4","darkblue"))+
+  scale_y_continuous(limits=c(0,5))
+
 #acesac
 ggplot(h2o2.ripup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
   geom_boxplot(position=position_dodge(0.9), size=1)+
@@ -3054,7 +3092,25 @@ ggplot(h2o2.ripup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
         legend.text = element_text(size=20))+
   ylab("Enzyme activity (nmol/h/g)")+
   scale_y_continuous(limits=c(0,5))
+
 ##Bottomland Upland
+h2o2.botup$LumpTrans=factor(h2o2.botup$LumpTrans, levels=c("B","UB","U"))
+ggplot(h2o2.botup, aes(x=Species,y=activity.lg,colour=LumpTrans))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  #ggtitle("Riparian-Bottomland")  +
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_blank(),
+        axis.title=element_blank(),
+        axis.text.x = element_text(size=16),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=16),
+        legend.position="top",
+        aspect.ratio = 1,
+        axis.ticks.length = unit(-0.2,"cm"))+
+  scale_color_manual(values=c("seagreen4","cornsilk4","darkblue"))+
+  scale_y_continuous(limits=c(0,5))
 #acesac
 h2o2.botup.acesac$LumpTrans=factor(h2o2.botup.acesac$LumpTrans, levels=c("B","UB","U"))
 ggplot(h2o2.botup.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
@@ -3103,7 +3159,25 @@ ggplot(h2o2.botup.querub, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
         legend.text = element_text(size=20))+
   ylab("Enzyme activity (nmol/h/g)")+
   scale_y_continuous(limits=c(0,5))
+
 ##Riparian Bottomland
+h2o2.ripbot$LumpTrans=factor(h2o2.ripbot$LumpTrans, levels=c("R","RB","B"))
+ggplot(h2o2.ripbot, aes(x=Species,y=activity.lg,colour=LumpTrans))+
+  geom_boxplot(position=position_dodge(0.9), size=1)+
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text=element_blank(),
+        axis.title=element_blank(),
+        axis.text.x = element_text(size=16),
+        #axis.title.y = element_blank(),
+        legend.text = element_text(size=16),
+        legend.position="top",
+        aspect.ratio = 1,
+        axis.ticks.length = unit(-0.2,"cm"))+
+  scale_color_manual(values=c("violetred4","cornsilk4","seagreen4"))+
+  scale_y_continuous(limits=c(0,5))
+
 #acesac
 h2o2.ripbot.acesac$LumpTrans=factor(h2o2.ripbot.acesac$LumpTrans, levels=c("R","RB","B"))
 ggplot(h2o2.ripbot.acesac, aes(x=LumpTrans,y=activity.lg,colour=Harvest))+
